@@ -12,7 +12,7 @@ router.use("/users", UserRoutes);
 router.use("/auth", AuthRoutes);
 
 // jobs
-router.use("/jobs", JobRoutes);
+router.use("/", JobRoutes);
 
 // companies
 router.use("/companies", CompanyRoutes);

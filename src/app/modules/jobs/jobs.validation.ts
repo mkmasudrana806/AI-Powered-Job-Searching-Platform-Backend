@@ -1,6 +1,6 @@
 import z from "zod";
 
-// -------- salary --------
+// Salary
 const salarySchema = z.object({
   type: z.enum(["fixed", "range", "negotiable", "not_disclosed"]),
   min: z.number().nullable().optional(),
@@ -11,7 +11,7 @@ const salarySchema = z.object({
   }),
 });
 
-// -------- location --------
+// location
 const locationSchema = z.object({
   city: z.string().optional(),
   country: z.string().optional(),
@@ -25,7 +25,7 @@ const locationSchema = z.object({
     .optional(),
 });
 
-// -------- qualifications --------
+// qualifications
 const qualificationSchema = z.object({
   educationLevel: z.enum([
     "ssc",
@@ -42,31 +42,53 @@ const qualificationSchema = z.object({
   }),
 });
 
+const createJobSchema = z.object({
+  title: z.string(),
+  description: z.string(),
+  responsibilities: z.array(z.string()).optional(),
+  requiredSkills: z.array(z.string()).optional(),
+  experienceLevel: z.enum(["junior", "mid", "senior", "lead"]),
+  employmentType: z.enum(["full-time", "part-time", "contract", "internship"]),
+  qualifications: qualificationSchema,
+  salary: salarySchema,
+  location: locationSchema,
+  expiresAt: z.date().optional(),
+});
+
 // -------- create job --------
 const createJobValidationSchema = z.object({
-  body: z.object({
-    companyId: z.string(),
+  body: createJobSchema.strict("No unknown keys allowed"),
+});
 
-    title: z.string(),
-    description: z.string(),
+// -------- draft job publish --------
+const createJobSchemaExtended = createJobSchema.extend({
+  status: z.enum(["open"]),
+});
 
-    responsibilities: z.array(z.string()).optional(),
-    requiredSkills: z.array(z.string()).optional(),
+const draftJobValidationSchema = z.object({
+  body: createJobSchemaExtended.strict("No unknown keys allowedss"),
+});
 
-    experienceLevel: z.enum(["junior", "mid", "senior", "lead"]),
-    employmentType: z.enum([
-      "full-time",
-      "part-time",
-      "contract",
-      "internship",
-    ]),
+// -------- change job status --------
+const changeJobStatusValidationSchema = z.object({
+  body: z
+    .object({
+      status: z.enum(["open", "closed", "archived"], {
+        required_error: "New status is required",
+        invalid_type_error: "Invalid status value",
+      }),
+    })
+    .strict("No unknown keys allowed"),
+});
 
-    qualifications: qualificationSchema,
-    salary: salarySchema,
-    location: locationSchema,
-  }),
+// -------- update job --------
+const updateJobValidationSchema = z.object({
+  body: createJobSchema.partial().strict("No unknown keys allowed"),
 });
 
 export const JobValidations = {
   createJobValidationSchema,
+  updateJobValidationSchema,
+  changeJobStatusValidationSchema,
+  draftJobValidationSchema,
 };

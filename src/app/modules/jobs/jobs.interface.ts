@@ -1,7 +1,20 @@
 import { Model, Types } from "mongoose";
 
+export type TSALARY = "fixed" | "range" | "negotiable" | "not_disclosed";
+export type TEDUCATION_LEVEL =
+  | "ssc"
+  | "hsc"
+  | "diploma"
+  | "bachelor"
+  | "master"
+  | "phd"
+  | "not_required";
+export type TEXPERIENCE_LEVEL = "junior" | "mid" | "senior" | "lead";
+export type TEMPLOYMENT = "full-time" | "part-time" | "contract" | "internship";
+export type TJOB_STATUS = "draft" | "open" | "closed" | "archived";
+
 export type TSalary = {
-  type: "fixed" | "range" | "negotiable" | "not_disclosed";
+  type: TSALARY;
   min?: number | null;
   max?: number | null;
   currency: string;
@@ -20,37 +33,30 @@ export type TLocation = {
 };
 
 export type TQualifications = {
-  educationLevel:
-    | "ssc"
-    | "hsc"
-    | "diploma"
-    | "bachelor"
-    | "master"
-    | "phd"
-    | "not_required";
+  educationLevel: TEDUCATION_LEVEL;
   fieldsOfStudy?: string[];
   text: string;
 };
 
 export type TJob = {
-  companyId: Types.ObjectId | string;
+  company: Types.ObjectId;
+  createdBy: Types.ObjectId;
   title: string;
   description: string;
   responsibilities: string[];
   requiredSkills: string[];
-
-  experienceLevel: "junior" | "mid" | "senior" | "lead";
-  employmentType: "full-time" | "part-time" | "contract" | "internship";
-
+  experienceLevel: TEXPERIENCE_LEVEL;
+  employmentType: TEMPLOYMENT;
   qualifications: TQualifications;
   salary: TSalary;
   location: TLocation;
-
-  embedding: number[];
-  embeddingModel: string;
-
-  isActive: boolean;
-  expiresAt?: Date;
+  embedding?: number[];
+  embeddingModel?: string;
+  status: TJOB_STATUS;
+  isDeleted: boolean;
+  expiresAt: Date;
+  closedAt?: Date;
+  archivedAt?: Date;
 };
 
 export interface IJob extends Model<TJob> {}

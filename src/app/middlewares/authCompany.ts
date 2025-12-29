@@ -2,23 +2,25 @@ import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../utils/asyncHandler";
 import AppError from "../utils/AppError";
 import { Company } from "../modules/companies/companies.model";
+import { Types } from "mongoose";
 
-const requireCompanyAuth = (...requireRoles: string[]) => {
+const requireCompanyAccess = (...requireRoles: string[]) => {
   return asyncHandler(
     async (req: Request, res: Response, next: NextFunction) => {
       // get companyId from params
       const { companyId } = req.params;
+
       if (!companyId) {
         throw new AppError(400, "Company ID is required in params");
       }
 
       // check company is exists
       const company = await Company.findOne(
-        { _id: companyId },
+        { _id: companyId, isDeleted: false },
         { status: 1, members: 1, isDeleted: 1 }
       );
       if (!company) {
-        throw new AppError(404, "Company not found");
+        throw new AppError(404, "Your requested company is not found");
       }
 
       // check company is approved
@@ -49,10 +51,14 @@ const requireCompanyAuth = (...requireRoles: string[]) => {
         );
       }
 
-      req.company = { companyId, userId: userId, memberRole: member.role };
+      req.company = {
+        companyId: company._id,
+        companyMembers: company.members,
+        userRoleInCompany: member.role,
+      };
       next();
     }
   );
 };
 
-export default requireCompanyAuth;
+export default requireCompanyAccess;

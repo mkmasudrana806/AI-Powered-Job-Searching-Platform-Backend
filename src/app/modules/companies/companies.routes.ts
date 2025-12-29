@@ -3,11 +3,11 @@ import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
 import { CompanyControllers } from "./companies.controller";
 import { CompanyValidations } from "./companies.validation";
-import requireCompanyAuth from "../../middlewares/authCompany";
+import requireCompanyAccess from "../../middlewares/authCompany";
 
 const router = express.Router();
 
-// create company (authenticated user)
+// create company
 router.post(
   "/create-company",
   auth("user"),
@@ -15,14 +15,38 @@ router.post(
   CompanyControllers.createCompany
 );
 
-/**
- * DELETE company (owner only)
- */
+// DELETE company
 router.delete(
   "/:companyId",
   auth("user"),
-  requireCompanyAuth("owner"),
+  requireCompanyAccess("owner"),
   CompanyControllers.deleteCompany
+);
+
+// Update company
+router.patch(
+  "/:companyId",
+  auth("user"),
+  requireCompanyAccess("owner"),
+  validateRequest(CompanyValidations.updateCompanyValidationSchema),
+  CompanyControllers.updateCompany
+);
+
+// Add recruiter
+router.post(
+  "/:companyId/recruiters",
+  auth("user"),
+  requireCompanyAccess("owner"),
+  validateRequest(CompanyValidations.addRecruiterValidationSchema),
+  CompanyControllers.addRecruiter
+);
+
+// Remove recruiter
+router.delete(
+  "/:companyId/recruiters/:userId",
+  auth("user"),
+  requireCompanyAccess("owner"),
+  CompanyControllers.removeRecruiter
 );
 
 // get all public approved companies

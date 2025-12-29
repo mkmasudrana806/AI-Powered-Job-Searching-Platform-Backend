@@ -10,7 +10,7 @@ const memberSchema = new Schema(
     },
     role: {
       type: String,
-      enum: ["owner", "admin", "recruiter"],
+      enum: ["owner", "admin"],
       required: true,
     },
   },

@@ -17,27 +17,44 @@ const locationSchema = z.object({
     .optional(),
 });
 
-const createCompanyValidationSchema = z.object({
-  body: z.object({
-    name: z.string({
-      required_error: "Company name is required",
-    }),
-
-    description: z.string({
+const createCompanySchema = z.object({
+  name: z.string({
+    required_error: "Company name is required",
+  }),
+  description: z
+    .string({
       required_error: "Company description is required",
-    }).min(15, "Description should be at least 15 characters long"),
+    })
+    .min(15, "Description should be at least 15 characters long"),
+  industry: z.string({
+    required_error: "Industry is required",
+  }),
+  website: z.string().url().optional(),
+  logo: z.string().optional(),
+  location: locationSchema.optional(),
+});
 
-    industry: z.string({
-      required_error: "Industry is required",
+// ------------------- create company -------------------
+const createCompanyValidationSchema = z.object({
+  body: createCompanySchema.strict("No unknown keys allowed"),
+});
+
+// ------------------- update company -------------------
+const updateCompanyValidationSchema = z.object({
+  body: createCompanySchema.partial().strict("No unknown keys allowed"),
+});
+
+// ------------------- add recruiter -------------------
+const addRecruiterValidationSchema = z.object({
+  body: z.object({
+    userId: z.string({
+      required_error: "userId is required",
     }),
-
-    website: z.string().url().optional(),
-    logo: z.string().optional(),
-
-    location: locationSchema.optional(),
   }),
 });
 
 export const CompanyValidations = {
   createCompanyValidationSchema,
+  updateCompanyValidationSchema,
+  addRecruiterValidationSchema,
 };

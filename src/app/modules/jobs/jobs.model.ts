@@ -3,9 +3,16 @@ import { TJob } from "./jobs.interface";
 
 const JobSchema = new Schema<TJob>(
   {
-    companyId: {
+    company: {
       type: Schema.Types.ObjectId,
       ref: "Company",
+      required: true,
+      index: true,
+    },
+
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
       index: true,
     },
@@ -71,17 +78,28 @@ const JobSchema = new Schema<TJob>(
 
     embedding: {
       type: [Number],
-      required: true,
       select: false,
     },
 
     embeddingModel: {
       type: String,
-      default: "gemini-text-embedding-004",
     },
 
-    isActive: { type: Boolean, default: true, index: true },
-    expiresAt: { type: Date },
+    status: {
+      type: String,
+      enum: ["draft", "open", "closed", "archived"],
+      default: "open",
+      index: true,
+    },
+    expiresAt: {
+      type: Date,
+      default: () => {
+        const date = new Date();
+        date.setDate(date.getDate() + 7);
+        return date;
+      },
+    },
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
