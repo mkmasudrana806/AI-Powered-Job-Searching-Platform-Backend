@@ -16,7 +16,7 @@ import { TCompanyMiddlewareData } from "../companies/companies.interface";
  */
 const createJobIntoDB = async (
   company: Types.ObjectId,
-  createdBy: Types.ObjectId,
+  createdBy: string,
   payload: TJob
 ) => {
   // ----------- save job as draft --------------

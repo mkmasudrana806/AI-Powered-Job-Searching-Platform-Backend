@@ -5,6 +5,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config/env";
 import { User } from "../modules/users/user.model";
 import asyncHandler from "../utils/asyncHandler";
+import { TJwtPayload } from "../modules/auth/auth.interface";
 
 /**
  * ------------------- auth --------------------
@@ -76,7 +77,7 @@ const auth = (...requiredRoles: string[]) => {
         throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access!");
       }
 
-      req.user = decoded;
+      req.user = { userId, role };
       next();
     }
   );

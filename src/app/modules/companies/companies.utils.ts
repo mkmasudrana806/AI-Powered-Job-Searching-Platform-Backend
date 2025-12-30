@@ -13,7 +13,7 @@ import { TCompany } from "./companies.interface";
  */
 export const validateCompanyBusinessRules = (
   payload: TCompany,
-  creatorUserId: ObjectId
+  creatorUserId: string
 ) => {
   const { name, description, industry, website, location } = payload;
 

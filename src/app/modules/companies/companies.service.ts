@@ -26,7 +26,7 @@ const searchableFields = ["name", "industry"];
  * @param userId who will create company
  * @returns newly created company data
  */
-const createCompanyIntoDB = async (payload: TCompany, userId: ObjectId) => {
+const createCompanyIntoDB = async (payload: TCompany, userId: string) => {
   // apply business rules
   validateCompanyBusinessRules(payload, userId);
 

@@ -31,8 +31,8 @@ const getAllUsers = asyncHandler(async (req, res, next) => {
 
 // ------------------- get me -------------------
 const getMe = asyncHandler(async (req, res, next) => {
-  const { email, role } = req.user;
-  const result = await UserServices.getMe(email, role);
+  const { userId, role } = req.user;
+  const result = await UserServices.getMe(userId, role);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

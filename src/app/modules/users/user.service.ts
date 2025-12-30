@@ -41,12 +41,12 @@ const getAllUsersFromDB = async (query: Record<string, any>) => {
 
 /**
  * -----------------  get me  -----------------
- * @param email email address
+ * @param userId user id
  * @param role user role
  * @returns own user data based on jwt payload data
  */
-const getMe = async (email: string, role: string) => {
-  const result = await User.findOne({ email, role });
+const getMe = async (userId: string, role: string) => {
+  const result = await User.findOne({ _id: userId, role });
   return result;
 };
 
