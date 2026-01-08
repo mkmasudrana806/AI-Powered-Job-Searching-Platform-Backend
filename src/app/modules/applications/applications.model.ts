@@ -27,11 +27,12 @@ const applicationSchema = new Schema<TApplication>(
     // snapshot
     resumeUrl: {
       type: String,
+      required: true,
     },
 
     coverLetter: {
       type: String,
-      maxlength: 5000,
+      maxlength: 1000,
     },
 
     applicantProfileSnapshot: {

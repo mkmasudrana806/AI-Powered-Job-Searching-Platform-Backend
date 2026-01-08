@@ -15,7 +15,7 @@ export type TApplication = {
   applicant: Types.ObjectId;
 
   // snapshot at apply time
-  resumeUrl?: string;
+  resumeUrl: string;
   coverLetter?: string;
   applicantProfileSnapshot?: {
     headline?: string;
@@ -31,11 +31,11 @@ export type TApplication = {
   reviewedAt?: Date;
 
   // AI / scoring
-  matchScore?: number; // 0–100
+  matchScore?: number;  
   rankingScore?: number;
   aiNotes?: string;
 
   // metadata
   appliedAt: Date;
-  updatedAt?: Date;
+  updatedAt: Date;
 };
