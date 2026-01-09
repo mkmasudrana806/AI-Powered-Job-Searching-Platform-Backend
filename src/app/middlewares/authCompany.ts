@@ -52,7 +52,7 @@ const requireCompanyAccess = (...requireRoles: string[]) => {
       }
 
       req.company = {
-        companyId: company._id,
+        companyId: company._id.toString(),
         companyMembers: company.members,
         userRoleInCompany: member.role,
       };

@@ -6,6 +6,7 @@ import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
 import { APPLICATION_STATUS_TRANSITIONS } from "./applications.constant";
 import { Types } from "mongoose";
+import { validateObjectIDs } from "../../utils/validateObjectIDs";
 
 /**
  * --------------------- apply job ----------------------
@@ -20,6 +21,12 @@ const applyJobIntoDB = async (
   applicantId: string,
   payload: Partial<TApplication>
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "job id", value: jobId },
+    { name: "applicant id", value: applicantId }
+  );
+
   // validate business rules
   const job = await validateJobApplyBusinessRules(jobId, applicantId);
 
@@ -65,10 +72,14 @@ const getMyApplicationsFromDB = async (
   applicantId: string,
   query: Record<string, unknown>
 ) => {
+  // validate object ids
+  validateObjectIDs({ name: "applicant id", value: applicantId });
+
   const applicationQuery = new QueryBuilder<TApplication>(
-    Application.find(),
+    Application.find({ applicant: applicantId }),
     query
   ).fieldsLimiting();
+
   const meta = await applicationQuery.countTotal();
   const result = await applicationQuery.modelQuery;
 
@@ -88,6 +99,12 @@ const withdrawApplicationFromDB = async (
   applicationId: string,
   userId: string
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "job id", value: userId },
+    { name: "applicantion id", value: applicationId }
+  );
+
   // atomic action, avoid race condition
   const result = await Application.findOneAndUpdate(
     {
@@ -130,6 +147,11 @@ const getApplicationsForAJobFromDB = async (
   jobId: string,
   query: Record<string, unknown>
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "job id", value: jobId },
+    { name: "company id", value: companyId }
+  );
   const applicationQuery = new QueryBuilder<TApplication>(
     Application.find({ company: companyId, job: jobId }),
     query
@@ -155,6 +177,13 @@ const updateApplicationStatusIntoDB = async (
   userId: string,
   payload: TApplicationStatus
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "company id", value: companyId },
+    { name: "application id", value: applicationId },
+    { name: "user id", value: userId }
+  );
+
   // read application status
   const application = await Application.findOne({
     _id: applicationId,
@@ -216,6 +245,12 @@ const getMySingleApplicationFromDB = async (
   applicationId: string,
   applicantId: string
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "application id", value: applicationId },
+    { name: "applicant id", value: applicantId }
+  );
+
   // create pipeline as populate less efficient
   const pipeline = [
     {

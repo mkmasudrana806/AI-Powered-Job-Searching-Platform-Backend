@@ -5,6 +5,7 @@ import { buildEmbeddingText, validateJobBusinessRules } from "./jobs.utils";
 import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
 import { TCompanyMiddlewareData } from "../companies/companies.interface";
+import { validateObjectIDs } from "../../utils/validateObjectIDs";
 
 /**
  * ------------------ create job as draft or open ------------------
@@ -15,16 +16,22 @@ import { TCompanyMiddlewareData } from "../companies/companies.interface";
  * @returns message
  */
 const createJobIntoDB = async (
-  company: Types.ObjectId,
+  companyId: string,
   createdBy: string,
   payload: TJob
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "company id", value: companyId },
+    { name: "user id", value: createdBy }
+  );
+
   // ----------- save job as draft --------------
   if (payload.status === "draft") {
     validateJobBusinessRules(payload);
     await Job.create({
       ...payload,
-      company,
+      company: companyId,
       createdBy,
     });
 
@@ -44,7 +51,7 @@ const createJobIntoDB = async (
   // save job to DB
   return await Job.create({
     ...payload,
-    company,
+    company: companyId,
     createdBy,
     // embedding:
     // embedding,
@@ -67,6 +74,12 @@ const publishDraftJobIntoDB = async (
   jobId: string,
   payload: Partial<TJob>
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "job id", value: jobId },
+    { name: "user id", value: userId }
+  );
+
   const { companyId, userRoleInCompany } = company;
 
   // fetch existing job data
@@ -138,6 +151,11 @@ const changeJobStatusIntoDB = async (
   userId: string,
   status: TJOB_STATUS
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "job id", value: jobId },
+    { name: "user id", value: userId }
+  );
   const { companyId, userRoleInCompany } = company;
 
   const STATUS_TRANSITIONS: Record<string, TJOB_STATUS[]> = {
@@ -218,10 +236,16 @@ const changeJobStatusIntoDB = async (
  * @returns message
  */
 const updateJobIntoDB = async (
-  companyId: Types.ObjectId,
+  companyId: string,
   jobId: string,
   payload: Partial<TJob>
 ) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "company id", value: companyId },
+    { name: "job id", value: jobId }
+  );
+
   // apply business rules validation
   validateJobBusinessRules(payload);
 
@@ -264,7 +288,13 @@ const updateJobIntoDB = async (
  * @param jobId job id to be deleted
  * @returns message
  */
-const deleteJobFromDB = async (companyId: Types.ObjectId, jobId: string) => {
+const deleteJobFromDB = async (companyId: string, jobId: string) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "company id", value: companyId },
+    { name: "job id", value: jobId }
+  );
+
   const deleted = await Job.findOneAndUpdate(
     {
       _id: jobId,
@@ -288,7 +318,10 @@ const deleteJobFromDB = async (companyId: Types.ObjectId, jobId: string) => {
  * @param companyId company id, whose jobs are to be loaded
  * @returns list of jobs
  */
-const getCompanyJobsFromDB = async (companyId: Types.ObjectId) => {
+const getCompanyJobsFromDB = async (companyId: string) => {
+  // validate object ids
+  validateObjectIDs({ name: "company id", value: companyId });
+
   const result = await Job.find({ company: companyId }).sort({ createdAt: -1 });
   return result;
 };

@@ -39,8 +39,6 @@ const loginUserIntoDB = async (payload: TLoginUser) => {
   // make access token and refresh token
   const jwtPayload = { userId: user._id.toString(), role: user.role };
 
-  console.log("jwt payload dta: ", jwtPayload);
-
   const accessToken = jwt.sign(jwtPayload, config.jwt_access_secret as string, {
     expiresIn: config.jwt_access_expires_in,
   });

@@ -41,7 +41,7 @@ export type TCompanyUpdate = Partial<
 >;
 
 export type TCompanyMiddlewareData = {
-  companyId: Types.ObjectId;
+  companyId: string;
   companyMembers: TCompany["members"];
   userRoleInCompany: TCompanyMember["role"];
 };

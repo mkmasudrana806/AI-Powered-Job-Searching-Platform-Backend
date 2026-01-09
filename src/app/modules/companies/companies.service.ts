@@ -16,6 +16,7 @@ import { Types } from "mongoose";
 import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
 import { User } from "../users/user.model";
+import { validateObjectIDs } from "../../utils/validateObjectIDs";
 
 const searchableFields = ["name", "industry"];
 
@@ -27,6 +28,9 @@ const searchableFields = ["name", "industry"];
  * @returns newly created company data
  */
 const createCompanyIntoDB = async (payload: TCompany, userId: string) => {
+  // validate object ids
+  validateObjectIDs({ name: "user id", value: userId });
+
   // apply business rules
   validateCompanyBusinessRules(payload, userId);
 
@@ -55,7 +59,10 @@ const createCompanyIntoDB = async (payload: TCompany, userId: string) => {
  * @param companyId company to be deleted
  * @returns success message
  */
-const deleteCompanyFromDB = async (companyId: Types.ObjectId) => {
+const deleteCompanyFromDB = async (companyId: string) => {
+  // validate object ids
+  validateObjectIDs({ name: "company id", value: companyId });
+
   await Company.findByIdAndUpdate(companyId, { isDeleted: true });
   return "company is deleted successfully";
 };
@@ -67,9 +74,12 @@ const deleteCompanyFromDB = async (companyId: Types.ObjectId) => {
  * @returns updated company
  */
 const updateCompanyIntoDB = async (
-  companyId: Types.ObjectId,
+  companyId: string,
   payload: TCompanyUpdate
 ) => {
+  // validate object ids
+  validateObjectIDs({ name: "company id", value: companyId });
+
   const updated = await Company.findByIdAndUpdate(companyId, payload, {
     new: true,
   });
@@ -86,6 +96,9 @@ const addRecruiterIntoDB = async (
   company: TCompanyMiddlewareData,
   userId: string
 ) => {
+  // validate object ids
+  validateObjectIDs({ name: "user id", value: userId });
+
   // check user exists
   const userExists = await User.exists({
     _id: userId,
@@ -128,6 +141,9 @@ const removeRecruiterFromDB = async (
   company: TCompanyMiddlewareData,
   userId: string
 ) => {
+  // validate object ids
+  validateObjectIDs({ name: "user id", value: userId });
+
   const memberIndex = company.companyMembers.findIndex(
     (m: any) => m.userId.toString() === userId
   );
