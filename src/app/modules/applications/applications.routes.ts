@@ -3,9 +3,10 @@ import auth from "../../middlewares/auth";
 import validateRequestData from "../../middlewares/validateRequest";
 import { ApplicationValidations } from "./applications.validation";
 import { ApplicationControllers } from "./applications.controller";
+import requireCompanyAccess from "../../middlewares/authCompany";
 const router = Router();
 
-// job seeker
+// apply job (job seeker)
 router.post(
   "/jobs/:jobId/applications",
   auth("user"),
@@ -13,39 +14,42 @@ router.post(
   ApplicationControllers.applyJob
 );
 
+// get all job of an applicants (job seeker)
 router.get(
-  "/me/applications"
-  // auth("user"),
-  // ApplicationControllers.getMyApplications
+  "/me/applications",
+  auth("user"),
+  ApplicationControllers.getMyApplications
 );
 
-// application lifecycle
+// withdraw an application (job seeker)
 router.patch(
-  "/applications/:applicationId/withdraw"
-  // auth("user"),
-  // ApplicationControllers.withdrawApplication
+  "/applications/:applicationId/withdraw",
+  auth("user"),
+  ApplicationControllers.withdrawApplication
 );
 
+// update application status (recruiter, owner)
 router.patch(
-  "/applications/:applicationId/status",
-  auth("user")
-  // requireCompanyAccess("owner", "recruiter"),
-  // // validateRequest(ApplicationValidations.updateApplicationStatusValidationSchema),
-  // ApplicationControllers.updateApplicationStatus
+  "/companies/:companyId/applications/:applicationId/status",
+  auth("user"),
+  requireCompanyAccess("owner", "recruiter"),
+  validateRequestData(ApplicationValidations.updateApplicationStatusValidation),
+  ApplicationControllers.updateApplicationStatus
 );
 
+// get single application (job seeker)
 router.get(
-  "/applications/:applicationId"
-  // auth("user"),
-  // ApplicationControllers.getSingleApplication
+  "/me/applications/:applicationId",
+  auth("user"),
+  ApplicationControllers.getSingleApplication
 );
 
-// recruiter
+// get applications for a job (recruiter)
 router.get(
   "/companies/:companyId/jobs/:jobId/applications",
-  auth("user")
-  // requireCompanyAccess("owner", "recruiter"),
-  // ApplicationControllers.getJobApplications
+  auth("user"),
+  requireCompanyAccess("owner", "recruiter"),
+  ApplicationControllers.getApplicationsForAJob
 );
 
 export const ApplicationRoutes = router;

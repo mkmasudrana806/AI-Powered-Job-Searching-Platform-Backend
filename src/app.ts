@@ -14,7 +14,7 @@ app.use(cors({ origin: "http://localhost:5000" })); // your client url
 app.use(cookieParser());
 
 // api routes (middleware)
-app.use("/api", ApiRoutes);
+app.use("/api/v1", ApiRoutes);
 
 // base api route
 app.get("/", (req: Request, res: Response) => {

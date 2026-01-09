@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-export type TApplicationStatus =
+type ApplicationStatus =
   | "applied"
   | "reviewing"
   | "shortlisted"
@@ -8,13 +8,19 @@ export type TApplicationStatus =
   | "hired"
   | "withdrawn";
 
+// application status history
+export type TApplicationStatusHistory = {
+  status: ApplicationStatus;
+  at: Date;
+  by?: Types.ObjectId; // recruiter/system
+};
+
 export type TApplication = {
-  // relations
   job: Types.ObjectId;
   company: Types.ObjectId;
   applicant: Types.ObjectId;
 
-  // snapshot at apply time
+  // snapshot
   resumeUrl: string;
   coverLetter?: string;
   applicantProfileSnapshot?: {
@@ -24,18 +30,22 @@ export type TApplication = {
   };
 
   // lifecycle
-  status: TApplicationStatus;
+  status: ApplicationStatus;
+  statusHistory: TApplicationStatusHistory[];
 
   // recruiter-side
   reviewedBy?: Types.ObjectId;
   reviewedAt?: Date;
 
-  // AI / scoring
-  matchScore?: number;  
+  // AI
+  matchScore?: number;
   rankingScore?: number;
   aiNotes?: string;
 
-  // metadata
+  withdrawnAt?: Date;
   appliedAt: Date;
-  updatedAt: Date;
+};
+
+export type TApplicationStatus = {
+  status: ApplicationStatus;
 };

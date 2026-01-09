@@ -1,5 +1,39 @@
 import { Schema, model } from "mongoose";
-import { TApplication } from "./applications.interface";
+import {
+  TApplication,
+  TApplicationStatusHistory,
+} from "./applications.interface";
+import { string } from "zod";
+
+const APPLICATION_STATUS = [
+  "applied",
+  "reviewing",
+  "shortlisted",
+  "rejected",
+  "hired",
+  "withdrawn",
+];
+
+// application status history
+const applicationStatusHistorySchema = new Schema<TApplicationStatusHistory>(
+  {
+    status: {
+      type: String,
+      enum: APPLICATION_STATUS,
+      required: true,
+    },
+    at: {
+      type: Date,
+      required: true,
+      default: Date.now,
+    },
+    by: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  },
+  { _id: false }
+);
 
 const applicationSchema = new Schema<TApplication>(
   {
@@ -27,7 +61,6 @@ const applicationSchema = new Schema<TApplication>(
     // snapshot
     resumeUrl: {
       type: String,
-      required: true,
     },
 
     coverLetter: {
@@ -43,16 +76,18 @@ const applicationSchema = new Schema<TApplication>(
 
     status: {
       type: String,
-      enum: [
-        "applied",
-        "reviewing",
-        "shortlisted",
-        "rejected",
-        "hired",
-        "withdrawn",
-      ],
+      enum: APPLICATION_STATUS,
       default: "applied",
       index: true,
+    },
+    statusHistory: {
+      type: [applicationStatusHistorySchema],
+      default: [],
+      required: true,
+    },
+
+    withdrawnAt: {
+      type: Date,
     },
 
     reviewedBy: {
@@ -64,7 +99,6 @@ const applicationSchema = new Schema<TApplication>(
       type: Date,
     },
 
-    // AI fields
     matchScore: {
       type: Number,
       min: 0,
@@ -90,10 +124,21 @@ const applicationSchema = new Schema<TApplication>(
   }
 );
 
-// Prevent duplicate applications
 applicationSchema.index({ job: 1, applicant: 1 }, { unique: true });
 
+// pre hooks
+applicationSchema.pre("save", function (next) {
+  if (this.isNew) {
+    this.statusHistory.push({
+      status: "applied",
+      at: this.appliedAt || new Date(),
+      by: this.applicant,
+    });
+  }
+  next();
+});
+
 export const Application = model<TApplication>(
-  "Applications",
+  "Application",
   applicationSchema
 );

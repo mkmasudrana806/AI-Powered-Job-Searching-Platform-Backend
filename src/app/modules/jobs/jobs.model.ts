@@ -106,4 +106,4 @@ const JobSchema = new Schema<TJob>(
   }
 );
 
-export const Job = model<TJob>("Jobs", JobSchema);
+export const Job = model<TJob>("Job", JobSchema);

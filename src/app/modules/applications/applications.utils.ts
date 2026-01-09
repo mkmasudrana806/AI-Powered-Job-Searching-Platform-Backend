@@ -45,6 +45,5 @@ export const validateJobApplyBusinessRules = async (
     );
   }
 
-  console.log("is company member: ", isCompanyMember);
   return job;
 };

@@ -98,4 +98,4 @@ userSchema.statics.isJWTIssuedBeforePasswordChange = function (
 };
 
 // make a model and export
-export const User = model<TUser, IUser>("Users", userSchema);
+export const User = model<TUser, IUser>("User", userSchema);

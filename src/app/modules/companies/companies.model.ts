@@ -66,7 +66,7 @@ const companySchema = new Schema<TCompany, ICompany>(
 
     createdBy: {
       type: Schema.Types.ObjectId,
-      ref: "Users",
+      ref: "User",
       required: true,
     },
 
@@ -94,4 +94,4 @@ const companySchema = new Schema<TCompany, ICompany>(
   }
 );
 
-export const Company = model<TCompany, ICompany>("Companies", companySchema);
+export const Company = model<TCompany, ICompany>("Company", companySchema);
