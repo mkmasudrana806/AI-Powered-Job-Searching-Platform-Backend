@@ -8,7 +8,7 @@ type TValidateObjectIDs = {
 };
 export const validateObjectIDs = (...ids: TValidateObjectIDs[]) => {
   for (const { name, value } of ids) {
-    if (!name || !value || !Types.ObjectId.isValid(name)) {
+    if (!name || !value || !Types.ObjectId.isValid(value)) {
       throw new AppError(httpStatus.BAD_REQUEST, `Invalid ${value}`);
     }
   }
