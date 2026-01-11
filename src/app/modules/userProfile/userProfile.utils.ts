@@ -3,6 +3,7 @@
 // education (degree, field of study), projects (title, description)
 
 import { TUserProfile } from "./userProfile.interface";
+import crypto from "crypto";
 
 /**
  * ------------------ build embedding text -----------------------
@@ -66,3 +67,15 @@ export const generateEmbeddingText = (
 
   return lines.join("\n").trim();
 };
+
+/**
+ * generate hash for semantic text. this has used to compare previous semantic
+ * and updated semantic changes or not
+ *
+ * -------------- generate hash --------------
+ *
+ * @param text embedding text
+ * @returns hash
+ */
+export const generateHash = (text: string): string =>
+  crypto.createHash("sha256").update(text).digest("hex");

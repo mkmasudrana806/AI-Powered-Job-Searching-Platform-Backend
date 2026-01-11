@@ -5,6 +5,7 @@ import { UserProfile } from "./userProfile.model";
 import { TUpdateUserProfile, TUserProfile } from "./userProfile.interface";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { EMBEDDING_FIELDS, SCALER_FIELDS_UPDATE } from "./userProfile.constant";
+import { generateEmbeddingText, generateHash } from "./userProfile.utils";
 
 /**
  * ------------------- Create Profile -------------------
@@ -57,6 +58,11 @@ const updateUserProfileIntoDB = async (
     throw new AppError(httpStatus.NOT_FOUND, "Profile is not found");
   }
 
+  // generate semantic text and hash of old profile data.
+  // later we use it after update profile
+  const previousSemanticText = generateEmbeddingText(profile);
+  const previousHash = generateHash(previousSemanticText);
+
   // ----- update single field -----
   for (const field of SCALER_FIELDS_UPDATE) {
     const value = payload[field];
@@ -101,7 +107,6 @@ const updateUserProfileIntoDB = async (
 
     // remove
     if (remove?.length) {
-      console.log("yes remove");
       profile.experience = profile.experience.filter(
         (exp) => !payload!.experience!.remove!.includes(exp._id.toString())
       );
@@ -130,7 +135,6 @@ const updateUserProfileIntoDB = async (
 
     // remove
     if (remove?.length) {
-      console.log("yes remove");
       profile.education = profile.education.filter(
         (exp) => !payload!.education!.remove!.includes(exp._id.toString())
       );
@@ -159,7 +163,6 @@ const updateUserProfileIntoDB = async (
 
     // remove
     if (remove?.length) {
-      console.log("yes remove");
       profile.certifications = profile.certifications.filter(
         (exp) => !payload!.certifications!.remove!.includes(exp._id.toString())
       );
@@ -188,20 +191,32 @@ const updateUserProfileIntoDB = async (
 
     // remove
     if (remove?.length) {
-      console.log("yes remove");
       profile.projects = profile.projects.filter(
         (exp) => !payload!.projects!.remove!.includes(exp._id.toString())
       );
     }
   }
 
-  console.log("before save, education payload: ", payload.education);
-  console.log("before save, profile data after all update: ", profile);
+  // generate semantic text and hash after applying all update
+  const updatedSemanticText = generateEmbeddingText(profile);
+  const updatedHash = generateHash(updatedSemanticText);
 
+  console.log("Previous semantic text: ", previousSemanticText);
+  console.log("Updated semantic text: ", updatedSemanticText);
+
+  console.log(previousHash);
+  console.log(updatedHash);
+
+  const isSemanticValueChanged = previousHash !== updatedHash;
+  if (isSemanticValueChanged) {
+    console.log("generate embedding...");
+    // generate embedding and add to profile
+  }
   await profile.save();
 
   return profile;
 };
+
 
 export const UserProfileServices = {
   createUserProfileIntoDB,

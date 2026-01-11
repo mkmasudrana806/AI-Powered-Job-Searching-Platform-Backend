@@ -1,5 +1,3 @@
-import { TUserProfile } from "./userProfile.interface";
-
 export const EMBEDDING_FIELDS: string[] = [
   "headline",
   "summary",
