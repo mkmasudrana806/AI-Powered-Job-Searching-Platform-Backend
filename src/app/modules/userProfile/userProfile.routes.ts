@@ -14,4 +14,13 @@ router.post(
   UserProfileControllers.createUserProfile
 );
 
+// update user profile
+router.patch(
+  "/me/profile",
+  auth("user"),
+  validateRequest(UserProfileValidations.updateProfileSchema),
+  UserProfileControllers.updateUserProfile
+);
+
+
 export const UserProfileRoutes = router;

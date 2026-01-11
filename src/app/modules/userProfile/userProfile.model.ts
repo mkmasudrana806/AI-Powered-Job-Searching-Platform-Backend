@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
-import { TUserProfile } from "./userProfile.interface";
+import { TCertification, TEducation, TExperience, TProject, TUserProfile } from "./userProfile.interface";
 
-const experienceSchema = new Schema({
+const experienceSchema = new Schema<TExperience>({
   companyName: { type: String, required: true },
   role: { type: String, required: true },
   startDate: { type: Date, required: true },
@@ -10,7 +10,7 @@ const experienceSchema = new Schema({
   description: { type: String },
 });
 
-const educationSchema = new Schema({
+const educationSchema = new Schema<TEducation>({
   institution: { type: String, required: true },
   degree: { type: String },
   fieldOfStudy: { type: String },
@@ -18,7 +18,7 @@ const educationSchema = new Schema({
   endYear: { type: Number },
 });
 
-const certificationSchema = new Schema({
+const certificationSchema = new Schema<TCertification>({
   name: { type: String, required: true },
   issuer: { type: String },
   issueDate: { type: Date },
@@ -26,7 +26,7 @@ const certificationSchema = new Schema({
   credentialUrl: { type: String },
 });
 
-const projectSchema = new Schema({
+const projectSchema = new Schema<TProject>({
   title: { type: String, required: true },
   description: { type: String },
   technologies: [{ type: String }],
@@ -87,10 +87,9 @@ const userProfileSchema = new Schema<TUserProfile>(
       default: [],
     },
 
-    employmentTypes: {
-      type: [String],
+    employmentType: {
+      type: String,
       enum: ["full-time", "part-time", "contract", "internship"],
-      default: [],
     },
 
     location: {

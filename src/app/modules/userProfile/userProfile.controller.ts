@@ -4,10 +4,16 @@ import sendResponse from "../../utils/sendResponse";
 import { JobServices } from "../jobs/jobs.service";
 import { UserProfileServices } from "./userProfile.service";
 
+/**
+ * ----------------- create user profile ------------------
+ */
 const createUserProfile = asyncHandler(async (req, res) => {
-const userId = req.user.userId;
-const payload = req.body;
-  const UserProfile = await UserProfileServices.createUserProfileIntoDB(userId, payload);
+  const userId = req.user.userId;
+  const payload = req.body;
+  const UserProfile = await UserProfileServices.createUserProfileIntoDB(
+    userId,
+    payload
+  );
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -17,7 +23,26 @@ const payload = req.body;
   });
 });
 
+/**
+ * ----------------- create user profile ------------------
+ */
+const updateUserProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+  const payload = req.body;
+  const UserProfile = await UserProfileServices.updateUserProfileIntoDB(
+    userId,
+    payload
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "UserProfile updated successfully",
+    data: UserProfile,
+  });
+});
 
 export const UserProfileControllers = {
-    createUserProfile
-}
+  createUserProfile,
+  updateUserProfile,
+};
