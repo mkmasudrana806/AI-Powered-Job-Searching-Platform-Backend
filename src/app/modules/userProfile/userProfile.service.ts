@@ -1,10 +1,9 @@
-import { Types } from "mongoose";
 import httpStatus from "http-status";
 import AppError from "../../utils/AppError";
 import { UserProfile } from "./userProfile.model";
 import { TUpdateUserProfile, TUserProfile } from "./userProfile.interface";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
-import { EMBEDDING_FIELDS, SCALER_FIELDS_UPDATE } from "./userProfile.constant";
+import { SCALER_FIELDS_UPDATE } from "./userProfile.constant";
 import {
   crudOperation,
   generateEmbeddingText,
@@ -78,8 +77,6 @@ const updateUserProfileIntoDB = async (
     const value = payload[field];
     if (value) {
       profile.set(field, value);
-      if (EMBEDDING_FIELDS.includes(field)) {
-      }
     }
   }
 
@@ -144,7 +141,30 @@ const updateUserProfileIntoDB = async (
   return profile;
 };
 
+/**
+ * ------------ get my profile (only owner side) --------------
+ *
+ * @param userId user id
+ * @returns user data
+ * only owner profile side, not public
+ */
+const getMyProfileFromDB = async (userId: string) => {
+  // validate userid
+  validateObjectIDs({ name: "user id", value: userId });
+
+  const profile = await UserProfile.findOne({
+    user: userId,
+    isDeleted: false,
+  }).populate("user");
+  
+  if (!profile) {
+    throw new AppError(httpStatus.NOT_FOUND, "Profile not found");
+  }
+  return profile;
+};
+
 export const UserProfileServices = {
   createUserProfileIntoDB,
   updateUserProfileIntoDB,
+  getMyProfileFromDB,
 };

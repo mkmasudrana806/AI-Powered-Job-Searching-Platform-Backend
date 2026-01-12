@@ -24,7 +24,7 @@ const createUserProfile = asyncHandler(async (req, res) => {
 });
 
 /**
- * ----------------- create user profile ------------------
+ * ----------------- update user profile ------------------
  */
 const updateUserProfile = asyncHandler(async (req, res) => {
   const userId = req.user.userId;
@@ -42,7 +42,23 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * ----------------- get my profile ------------------
+ */
+const getMyProfile = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+  const UserProfile = await UserProfileServices.getMyProfileFromDB(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "My Profile retrieved successfully",
+    data: UserProfile,
+  });
+});
+
 export const UserProfileControllers = {
   createUserProfile,
   updateUserProfile,
+  getMyProfile
 };
