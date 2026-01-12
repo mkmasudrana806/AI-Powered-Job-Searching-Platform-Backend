@@ -52,6 +52,8 @@ const updateUserProfileIntoDB = async (
   // validate object id
   validateObjectIDs({ name: "user id", value: userId });
 
+  // TODO: apply business logic later
+
   // check if user profile exists
   const profile = await UserProfile.findOne({
     user: userId,
@@ -67,7 +69,6 @@ const updateUserProfileIntoDB = async (
   let previousHash: string | undefined = profile.previousHash;
 
   if (!profile?.previousHash) {
-    console.log("previous hash nai...");
     previousSemanticText = generateEmbeddingText(profile);
     previousHash = generateHash(previousSemanticText);
   }
@@ -134,6 +135,7 @@ const updateUserProfileIntoDB = async (
   if (isSemanticValueChanged) {
     profile.previousHash = updatedHash;
     console.log("generate embedding...");
+    // TODO: later add generate embedding function
     // generate embedding and add to profile
   }
   await profile.save();

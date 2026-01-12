@@ -1,49 +1,27 @@
-import httpStatus from "http-status";
-import { Types } from "mongoose";
-import AppError from "../../utils/AppError";
-import { Job } from "../jobs/jobs.model";
-import { Company } from "../companies/companies.model";
-import { Application } from "./applications.model";
+import { TExperience } from "../userProfile/userProfile.interface";
 
-export const validateJobApplyBusinessRules = async (
-  jobId: string,
-  applicantId: string
-) => {
-  // job must exist and be open
-  const job = await Job.findById(jobId).select("status company");
-  if (!job) {
-    throw new AppError(httpStatus.NOT_FOUND, "Job not found");
+/**
+ * ------------ build experience summary ---------------
+ *
+ * @param experiences experience array
+ * @returns formated semantic summary
+ *
+ * if and only if, user has experiences. else null
+ */
+export const buildExperienceSummaryText = (experiences: TExperience[]) => {
+  let summaries: string[] = [];
+
+  if (experiences.length) {
+    experiences.map((exp) => {
+      if (exp.companyName && exp.role && exp.startDate) {
+        const startYear = exp.startDate.getFullYear();
+        const endYear = exp.isCurrent ? "Present" : exp.endDate?.getFullYear();
+        summaries.push(
+          `${exp.role} at ${exp.companyName} (${startYear} – ${endYear})`
+        );
+      }
+    });
   }
 
-  if (job.status !== "open") {
-    throw new AppError(httpStatus.BAD_REQUEST, "Job is already closed!");
-  }
-
-  // prevent duplicate application
-  const alreadyApplied = await Application.exists({
-    job: jobId,
-    applicant: applicantId,
-  });
-
-  if (alreadyApplied) {
-    throw new AppError(
-      httpStatus.CONFLICT,
-      "You have already applied to this job"
-    );
-  }
-
-  // prevent company members from applying
-  const isCompanyMember = await Company.exists({
-    _id: job.company,
-    "members.userId": applicantId,
-  });
-
-  if (isCompanyMember) {
-    throw new AppError(
-      httpStatus.FORBIDDEN,
-      "Company members cannot apply to their own job"
-    );
-  }
-
-  return job;
+  return summaries.join(" | ");
 };

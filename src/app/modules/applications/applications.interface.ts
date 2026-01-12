@@ -22,12 +22,12 @@ export type TApplication = {
   applicant: Types.ObjectId;
 
   // snapshot
-  resumeUrl?: string | null; // application time either present or make null
-  coverLetter?: string | null;
+  resumeUrl: string | null; // application time either present or make null
+  coverLetter: string | null;
   applicantProfileSnapshot: {
     headline: string;
     skills: string[];
-    // experienceSummary?: string;
+    experienceSummary: string | null;
   };
 
   // lifecycle

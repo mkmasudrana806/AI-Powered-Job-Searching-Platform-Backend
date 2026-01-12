@@ -1,5 +1,4 @@
 import { Application } from "./applications.model";
-import { validateJobApplyBusinessRules } from "./applications.utils";
 import QueryBuilder from "../../queryBuilder/queryBuilder";
 import { TApplication, TApplicationStatus } from "./applications.interface";
 import AppError from "../../utils/AppError";
@@ -10,6 +9,7 @@ import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { UserProfile } from "../userProfile/userProfile.model";
 import { Job } from "../jobs/jobs.model";
 import { Company } from "../companies/companies.model";
+import { buildExperienceSummaryText } from "./applications.utils";
 
 /**
  * --------------------- apply job ----------------------
@@ -34,11 +34,11 @@ const applyJobIntoDB = async (
   const userProfile = await UserProfile.findOne({
     user: applicantId,
     isDeleted: false,
-  }).select("headline skills");
+  }).select("headline skills experience");
   if (!userProfile) {
     throw new AppError(httpStatus.NOT_FOUND, "Your profile not found!");
   }
-  if (userProfile.headline) {
+  if (!userProfile.headline) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
       "Update your profile and headline"
@@ -47,9 +47,7 @@ const applyJobIntoDB = async (
   if (!userProfile.skills?.length) {
     throw new AppError(httpStatus.BAD_REQUEST, "Add skills to your profile");
   }
-  if (!userProfile.resumeUrl) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Please update your resume");
-  }
+
 
   // job must exist and be open
   const job = await Job.findById(jobId).select("status company");
@@ -74,6 +72,12 @@ const applyJobIntoDB = async (
     );
   }
 
+  // build experience summary text
+  const experienceSummaryText = buildExperienceSummaryText(
+    userProfile.experience ?? []
+  );
+
+  // new application data
   const newPpplicationData = {
     job: jobId,
     company: job.company,
@@ -83,14 +87,19 @@ const applyJobIntoDB = async (
     applicantProfileSnapshot: {
       headline: userProfile.headline,
       skills: userProfile.skills,
-      // experienceSummary: userProfile.summary,
+      experienceSummary: experienceSummaryText,
     },
     status: "applied",
+    statusHistory: {
+      status: "applied",
+      at: new Date(),
+      by: applicantId,
+    },
     appliedAt: new Date(),
   };
 
-  // create application
   const application = await Application.create(newPpplicationData);
+  
 
   return {
     applicationId: application._id,
