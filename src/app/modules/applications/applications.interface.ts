@@ -16,17 +16,18 @@ export type TApplicationStatusHistory = {
 };
 
 export type TApplication = {
+  _id: Types.ObjectId;
   job: Types.ObjectId;
   company: Types.ObjectId;
   applicant: Types.ObjectId;
 
   // snapshot
-  resumeUrl: string;
-  coverLetter?: string;
-  applicantProfileSnapshot?: {
-    headline?: string;
-    skills?: string[];
-    experienceSummary?: string;
+  resumeUrl?: string | null; // application time either present or make null
+  coverLetter?: string | null;
+  applicantProfileSnapshot: {
+    headline: string;
+    skills: string[];
+    // experienceSummary?: string;
   };
 
   // lifecycle
@@ -34,6 +35,7 @@ export type TApplication = {
   statusHistory: TApplicationStatusHistory[];
 
   // recruiter-side
+  // these are later of life cycle. not application creation time
   reviewedBy?: Types.ObjectId;
   reviewedAt?: Date;
 

@@ -1,10 +1,10 @@
 import { z } from "zod";
-import errorMap from "zod/lib/locales/en";
 
 // apply job schema
 const applyJobSchema = z.object({
   coverLetter: z
     .string()
+    .min(150, "Cover letter should have at least 150 characters")
     .max(1000, "Cover letter should not be more than 1000 characters")
     .optional(),
 });

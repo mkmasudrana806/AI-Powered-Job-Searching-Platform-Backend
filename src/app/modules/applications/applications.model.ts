@@ -30,6 +30,7 @@ const applicationStatusHistorySchema = new Schema<TApplicationStatusHistory>(
     by: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
   },
   { _id: false }
@@ -61,16 +62,20 @@ const applicationSchema = new Schema<TApplication>(
     // snapshot
     resumeUrl: {
       type: String,
+      default: null,
     },
 
     coverLetter: {
       type: String,
+      minLength: 200,
       maxlength: 1000,
+      default: null,
+      trim: true,
     },
 
     applicantProfileSnapshot: {
-      headline: String,
-      skills: [String],
+      headline: { type: String, required: true },
+      skills: { type: [String], required: true },
       experienceSummary: String,
     },
 

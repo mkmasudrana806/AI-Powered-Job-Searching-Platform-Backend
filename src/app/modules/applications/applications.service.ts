@@ -7,6 +7,9 @@ import httpStatus from "http-status";
 import { APPLICATION_STATUS_TRANSITIONS } from "./applications.constant";
 import { Types } from "mongoose";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
+import { UserProfile } from "../userProfile/userProfile.model";
+import { Job } from "../jobs/jobs.model";
+import { Company } from "../companies/companies.model";
 
 /**
  * --------------------- apply job ----------------------
@@ -27,34 +30,67 @@ const applyJobIntoDB = async (
     { name: "applicant id", value: applicantId }
   );
 
-  // validate business rules
-  const job = await validateJobApplyBusinessRules(jobId, applicantId);
+  // check user profile created and exist required fields like headline, resumeUrl and skills for snapshot
+  const userProfile = await UserProfile.findOne({
+    user: applicantId,
+    isDeleted: false,
+  }).select("headline skills");
+  if (!userProfile) {
+    throw new AppError(httpStatus.NOT_FOUND, "Your profile not found!");
+  }
+  if (userProfile.headline) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Update your profile and headline"
+    );
+  }
+  if (!userProfile.skills?.length) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Add skills to your profile");
+  }
+  if (!userProfile.resumeUrl) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Please update your resume");
+  }
 
-  // fetch applicant profile snapshot
-  //   const profile = await UserProfile.findOne({ user: applicantId }).select(
-  //     "headline skills summary"
-  //   );
+  // job must exist and be open
+  const job = await Job.findById(jobId).select("status company");
+  if (!job) {
+    throw new AppError(httpStatus.NOT_FOUND, "Job not found");
+  }
 
-  // build snapshot (safe even if profile is missing)
-  //   const snapshot = profile
-  //     ? {
-  //         headline: profile.headline,
-  //         skills: profile.skills,
-  //         experienceSummary: profile.summary,
-  //       }
-  //     : undefined;
+  if (job.status !== "open") {
+    throw new AppError(httpStatus.BAD_REQUEST, "Job is already closed!");
+  }
 
-  // create application
-  const application = await Application.create({
+  // prevent company members from applying their own job
+  const isCompanyMember = await Company.exists({
+    _id: job.company,
+    "members.userId": applicantId,
+  });
+
+  if (isCompanyMember) {
+    throw new AppError(
+      httpStatus.FORBIDDEN,
+      "Company members cannot apply to their own job"
+    );
+  }
+
+  const newPpplicationData = {
     job: jobId,
     company: job.company,
     applicant: applicantId,
-    resumeUrl: payload.resumeUrl,
-    coverLetter: payload.coverLetter,
-    // applicantProfileSnapshot: snapshot,
+    resumeUrl: userProfile.resumeUrl ?? null,
+    coverLetter: payload.coverLetter ?? null,
+    applicantProfileSnapshot: {
+      headline: userProfile.headline,
+      skills: userProfile.skills,
+      // experienceSummary: userProfile.summary,
+    },
     status: "applied",
     appliedAt: new Date(),
-  });
+  };
+
+  // create application
+  const application = await Application.create(newPpplicationData);
 
   return {
     applicationId: application._id,
