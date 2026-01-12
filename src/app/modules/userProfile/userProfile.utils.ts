@@ -79,3 +79,46 @@ export const generateEmbeddingText = (
  */
 export const generateHash = (text: string): string =>
   crypto.createHash("sha256").update(text).digest("hex");
+
+/**
+ * ------------------ crud operation ---------------------
+ * @param oldTarget existing experience, projects, certifications, education reference
+ * @param crud new actions with payload for experience, projects, certifications, education
+ */
+// experience, projects, certifications, education crud operation reusable method
+export const crudOperation = <T extends { _id: string }>(
+  oldTarget: T[],
+  crud: {
+    add?: T[];
+    update?: T[];
+    remove?: string[];
+  }
+) => {
+  const { add = [], update = [], remove = [] } = crud;
+  // add
+  if (add.length) {
+    oldTarget.push(...add);
+  }
+
+  // update (old and new both has content, then update possible)
+  if (update.length && oldTarget.length) {
+    for (const updatedExp of update) {
+      const existing = oldTarget.find(
+        (ex) => ex._id.toString() === updatedExp._id
+      );
+      if (existing) {
+        Object.assign(existing, updatedExp);
+      }
+    }
+  }
+
+  // remove (old and new both should length)
+  if (remove.length && oldTarget.length) {
+    const removeSet = new Set(remove);
+    for (let i = oldTarget.length - 1; i >= 0; i--) {
+      if (removeSet.has(oldTarget[i]._id.toString())) {
+        oldTarget.splice(i, 1);
+      }
+    }
+  }
+};

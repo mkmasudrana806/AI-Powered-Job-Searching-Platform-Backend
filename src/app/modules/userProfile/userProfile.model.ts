@@ -1,5 +1,11 @@
 import { Schema, model } from "mongoose";
-import { TCertification, TEducation, TExperience, TProject, TUserProfile } from "./userProfile.interface";
+import {
+  TCertification,
+  TEducation,
+  TExperience,
+  TProject,
+  TUserProfile,
+} from "./userProfile.interface";
 
 const experienceSchema = new Schema<TExperience>({
   companyName: { type: String, required: true },
@@ -44,8 +50,8 @@ const userProfileSchema = new Schema<TUserProfile>(
       index: true,
     },
 
-    headline: { type: String, maxlength: 150 },
-    summary: { type: String, maxlength: 5000 },
+    headline: { type: String, minLength: 5, maxlength: 150, required: true },
+    summary: { type: String, minlength: 50, maxlength: 5000 },
 
     skills: {
       type: [String],
@@ -76,6 +82,7 @@ const userProfileSchema = new Schema<TUserProfile>(
     totalYearsOfExperience: {
       type: Number,
       min: 0,
+      max: 30,
     },
 
     currentRole: {
@@ -118,6 +125,11 @@ const userProfileSchema = new Schema<TUserProfile>(
       type: Boolean,
       default: true,
     },
+
+    previousHash: {
+      type: String,
+    },
+
     isDeleted: {
       type: Boolean,
       default: false,

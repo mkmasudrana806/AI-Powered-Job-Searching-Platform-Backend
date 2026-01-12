@@ -1,4 +1,4 @@
-import {   Types } from "mongoose";
+import { Types } from "mongoose";
 
 export type TExperience = {
   _id: string;
@@ -39,20 +39,20 @@ export type TProject = {
 // ------- user profile ----------
 export type TUserProfile = {
   user: Types.ObjectId;
-  headline?: string;
+  headline: string;
   summary?: string;
 
   // structured skills & experience
-  skills: string[];
-  experience: TExperience[];
-  education: TEducation[];
-  certifications: TCertification[];
-  projects: TProject[];
+  skills?: string[];
+  experience?: TExperience[];
+  education?: TEducation[];
+  certifications?: TCertification[];
+  projects?: TProject[];
 
   // career metadata
   totalYearsOfExperience?: number;
   currentRole?: string;
-  preferredRoles: string[];
+  preferredRoles?: string[];
   employmentType?: "full-time" | "part-time" | "contract" | "internship";
 
   // location & preferences
@@ -60,13 +60,14 @@ export type TUserProfile = {
     city?: string;
     country?: string;
   };
-  jobPreference?: "remote" | "hybrid" | "onsite";
+  jobPreference: "remote" | "hybrid" | "onsite";
   resumeUrl?: string;
 
   // AI & semantic layer
   embedding?: number[];
   embeddingModel?: string;
   embeddingDirty: boolean;
+  previousHash?: string;
 
   isDeleted: boolean;
 };

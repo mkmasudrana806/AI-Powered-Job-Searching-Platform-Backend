@@ -5,7 +5,11 @@ import { UserProfile } from "./userProfile.model";
 import { TUpdateUserProfile, TUserProfile } from "./userProfile.interface";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { EMBEDDING_FIELDS, SCALER_FIELDS_UPDATE } from "./userProfile.constant";
-import { generateEmbeddingText, generateHash } from "./userProfile.utils";
+import {
+  crudOperation,
+  generateEmbeddingText,
+  generateHash,
+} from "./userProfile.utils";
 
 /**
  * ------------------- Create Profile -------------------
@@ -60,8 +64,14 @@ const updateUserProfileIntoDB = async (
 
   // generate semantic text and hash of old profile data.
   // later we use it after update profile
-  const previousSemanticText = generateEmbeddingText(profile);
-  const previousHash = generateHash(previousSemanticText);
+  let previousSemanticText: string = "";
+  let previousHash: string | undefined = profile.previousHash;
+
+  if (!profile?.previousHash) {
+    console.log("previous hash nai...");
+    previousSemanticText = generateEmbeddingText(profile);
+    previousHash = generateHash(previousSemanticText);
+  }
 
   // ----- update single field -----
   for (const field of SCALER_FIELDS_UPDATE) {
@@ -87,128 +97,45 @@ const updateUserProfileIntoDB = async (
 
   // ----- update experience -----
   if (payload.experience) {
-    const { add = [], update = [], remove = [] } = payload.experience;
-    // add
-    if (Array.isArray(add)) {
-      profile.experience.push(...add);
+    if (!profile.experience) {
+      profile.experience = [];
     }
-
-    // update
-    if (Array.isArray(update)) {
-      for (const updatedExp of update) {
-        const existing = profile.experience.find(
-          (ex) => ex._id.toString() === updatedExp._id
-        );
-        if (existing) {
-          Object.assign(existing, updatedExp);
-        }
-      }
-    }
-
-    // remove
-    if (remove?.length) {
-      profile.experience = profile.experience.filter(
-        (exp) => !payload!.experience!.remove!.includes(exp._id.toString())
-      );
-    }
+    crudOperation(profile.experience, payload.experience ?? {});
   }
 
   // ----- update education -----
   if (payload.education) {
-    const { add = [], update = [], remove = [] } = payload.education;
-    // add
-    if (Array.isArray(add)) {
-      profile.education.push(...add);
+    if (!profile.education) {
+      profile.education = [];
     }
-
-    // update
-    if (Array.isArray(update)) {
-      for (const updatedExp of update) {
-        const existing = profile.education.find(
-          (ex) => ex._id.toString() === updatedExp._id
-        );
-        if (existing) {
-          Object.assign(existing, updatedExp);
-        }
-      }
-    }
-
-    // remove
-    if (remove?.length) {
-      profile.education = profile.education.filter(
-        (exp) => !payload!.education!.remove!.includes(exp._id.toString())
-      );
-    }
+    crudOperation(profile.education, payload.education ?? {});
   }
 
   // ----- update certifications -----
   if (payload.certifications) {
-    const { add = [], update = [], remove = [] } = payload.certifications;
-    // add
-    if (Array.isArray(add)) {
-      profile.certifications.push(...add);
+    if (!profile.certifications) {
+      profile.certifications = [];
     }
-
-    // update
-    if (Array.isArray(update)) {
-      for (const updatedExp of update) {
-        const existing = profile.certifications.find(
-          (ex) => ex._id.toString() === updatedExp._id
-        );
-        if (existing) {
-          Object.assign(existing, updatedExp);
-        }
-      }
-    }
-
-    // remove
-    if (remove?.length) {
-      profile.certifications = profile.certifications.filter(
-        (exp) => !payload!.certifications!.remove!.includes(exp._id.toString())
-      );
-    }
+    crudOperation(profile.certifications, payload.certifications ?? {});
   }
 
-  // ----- update projects -----
+  // ----- update experience -----
   if (payload.projects) {
-    const { add = [], update = [], remove = [] } = payload.projects;
-    // add
-    if (Array.isArray(add)) {
-      profile.projects.push(...add);
+    if (!profile.projects) {
+      profile.projects = [];
     }
-
-    // update
-    if (Array.isArray(update)) {
-      for (const updatedExp of update) {
-        const existing = profile.projects.find(
-          (ex) => ex._id.toString() === updatedExp._id
-        );
-        if (existing) {
-          Object.assign(existing, updatedExp);
-        }
-      }
-    }
-
-    // remove
-    if (remove?.length) {
-      profile.projects = profile.projects.filter(
-        (exp) => !payload!.projects!.remove!.includes(exp._id.toString())
-      );
-    }
+    crudOperation(profile.projects, payload.projects ?? {});
   }
 
   // generate semantic text and hash after applying all update
   const updatedSemanticText = generateEmbeddingText(profile);
   const updatedHash = generateHash(updatedSemanticText);
 
-  console.log("Previous semantic text: ", previousSemanticText);
-  console.log("Updated semantic text: ", updatedSemanticText);
-
-  console.log(previousHash);
-  console.log(updatedHash);
-
+  // if hash changed, update the has and embedding
   const isSemanticValueChanged = previousHash !== updatedHash;
+
   if (isSemanticValueChanged) {
+    profile.previousHash = updatedHash;
     console.log("generate embedding...");
     // generate embedding and add to profile
   }
@@ -216,7 +143,6 @@ const updateUserProfileIntoDB = async (
 
   return profile;
 };
-
 
 export const UserProfileServices = {
   createUserProfileIntoDB,

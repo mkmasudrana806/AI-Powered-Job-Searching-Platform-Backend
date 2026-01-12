@@ -61,7 +61,11 @@ const createProfile = z.object({
 });
 
 const createProfileSchema = z.object({
-  body: createProfile.strict("Unknown field is not allowed"),
+  body: z
+    .object({
+      headline: z.string().min(5).max(150),
+    })
+    .strict("Unknown field is not allowed"),
 });
 
 // --------- Update Profile ----------
