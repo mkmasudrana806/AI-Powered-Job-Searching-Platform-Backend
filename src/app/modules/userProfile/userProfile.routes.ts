@@ -25,4 +25,6 @@ router.patch(
 // get my profile (only profile owner)
 router.get("/me/profile", auth("user"), UserProfileControllers.getMyProfile);
 
+router.get("/profiles/:profileId", UserProfileControllers.getUserPublicProfile);
+
 export const UserProfileRoutes = router;

@@ -57,8 +57,26 @@ const getMyProfile = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * ----------------- get my profile ------------------
+ */
+const getUserPublicProfile = asyncHandler(async (req, res) => {
+  const userId = req.params.profileId;
+  const UserProfile = await UserProfileServices.getUserPublicProfileFromDB(
+    userId
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Profile retrieved successfully",
+    data: UserProfile,
+  });
+});
+
 export const UserProfileControllers = {
   createUserProfile,
   updateUserProfile,
-  getMyProfile
+  getMyProfile,
+  getUserPublicProfile,
 };

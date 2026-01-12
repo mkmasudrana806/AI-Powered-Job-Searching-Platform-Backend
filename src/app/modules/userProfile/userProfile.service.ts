@@ -156,10 +156,28 @@ const getMyProfileFromDB = async (userId: string) => {
     user: userId,
     isDeleted: false,
   }).populate("user");
-  
+
   if (!profile) {
     throw new AppError(httpStatus.NOT_FOUND, "Profile not found");
   }
+  return profile;
+};
+
+/**
+ * ------------------- Public Profile of user -------------------
+ */
+const getUserPublicProfileFromDB = async (profileId: string) => {
+  validateObjectIDs({ name: "profile id", value: profileId });
+
+  const profile = await UserProfile.findOne({
+    _id: profileId,
+    isDeleted: false,
+  }).populate("user");
+
+  if (!profile) {
+    throw new AppError(httpStatus.NOT_FOUND, "Profile not available");
+  }
+
   return profile;
 };
 
@@ -167,4 +185,5 @@ export const UserProfileServices = {
   createUserProfileIntoDB,
   updateUserProfileIntoDB,
   getMyProfileFromDB,
+  getUserPublicProfileFromDB,
 };
