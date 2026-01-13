@@ -137,6 +137,7 @@ const updateUserProfileIntoDB = async (
     console.log("generate embedding...");
     // TODO: later add generate embedding function
     // generate embedding and add to profile
+    profile.embeddingDirty = true;
   }
   await profile.save();
 

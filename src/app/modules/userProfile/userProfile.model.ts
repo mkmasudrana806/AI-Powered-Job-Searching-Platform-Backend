@@ -123,7 +123,7 @@ const userProfileSchema = new Schema<TUserProfile>(
 
     embeddingDirty: {
       type: Boolean,
-      default: true,
+      default: false,
     },
 
     previousHash: {
