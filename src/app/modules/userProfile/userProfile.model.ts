@@ -116,7 +116,10 @@ const userProfileSchema = new Schema<TUserProfile>(
       type: [Number],
       select: false,
     },
+    embeddingText: {
+       type: String,
 
+    },
     embeddingModel: {
       type: String,
     },

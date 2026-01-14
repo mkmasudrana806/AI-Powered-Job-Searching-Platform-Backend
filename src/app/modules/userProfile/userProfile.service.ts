@@ -134,13 +134,15 @@ const updateUserProfileIntoDB = async (
 
   if (isSemanticValueChanged) {
     profile.previousHash = updatedHash;
-    console.log("generate embedding...");
-    // TODO: later add generate embedding function
-    // generate embedding and add to profile
+    // we use it to generate embedding as separate worker by queue
+    profile.embeddingText = updatedSemanticText;
     profile.embeddingDirty = true;
   }
   await profile.save();
 
+  if (profile.embeddingDirty) {
+    // TODO: add task to queue for profile embedding
+  }
   return profile;
 };
 

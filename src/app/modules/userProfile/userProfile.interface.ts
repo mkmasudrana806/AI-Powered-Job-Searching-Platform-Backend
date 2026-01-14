@@ -65,6 +65,7 @@ export type TUserProfile = {
 
   // AI & semantic layer
   embedding?: number[];
+  embeddingText?: string;
   embeddingModel?: string;
   embeddingDirty: boolean;
   previousHash?: string;
