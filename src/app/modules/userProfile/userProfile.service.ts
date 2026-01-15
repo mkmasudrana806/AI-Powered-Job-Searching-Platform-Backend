@@ -9,6 +9,7 @@ import {
   generateEmbeddingText,
   generateHash,
 } from "./userProfile.utils";
+import { embeddingQueue } from "../../jobs/queues/embedding.queue";
 
 /**
  * ------------------- Create Profile -------------------
@@ -138,12 +139,30 @@ const updateUserProfileIntoDB = async (
     profile.embeddingText = updatedSemanticText;
     profile.embeddingDirty = true;
   }
-  await profile.save();
+  const result = await profile.save();
 
   if (profile.embeddingDirty) {
     // TODO: add task to queue for profile embedding
+
+    console.log("yes embedding is changed!");
+
+    // submit profile embedding background job
+    embeddingQueue.add(
+      "profile",
+      { jobId: profile._id },
+      {
+        attempts: 3,
+        backoff: {
+          type: "exponential",
+          delay: 3000,
+        },
+        removeOnComplete: true,
+        removeOnFail: false,
+      }
+    );
   }
-  return profile;
+
+  return result;
 };
 
 /**

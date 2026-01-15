@@ -1,8 +1,14 @@
 import { Queue } from "bullmq";
+import redisConnection from "../../config/redis";
 
-export const embedding = new Queue("embedding-queue", {
-  connection: {
-    host: "localhost",
-    port: 6379,
-  },
+/**
+ * Queue for profile, job or any embedding
+ */
+export const embeddingQueue = new Queue("embedding-queue", {
+  connection: redisConnection,
+});
+
+// error
+embeddingQueue.on("error", (err) => {
+  if (err) console.log("Embedding queue throws error!");
 });

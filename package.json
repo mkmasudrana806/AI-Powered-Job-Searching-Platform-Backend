@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "concurrently \"tsc -w\" \"tsnd --respawn ./dist/server.js\""
+    "dev:api": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "dev:worker": "ts-node-dev --respawn --transpile-only ./src/workers.ts",
+    "dev": "concurrently -n \"API,WORKER\" -c \"green,blue\" \"npm run dev:api\" \"npm run dev:worker\"",
+    "build": "tsc",
+    "start:api": "node ./dist/server.js",
+    "start:worker": "node ./dist/jobs/workers.js"
   },
   "keywords": [],
   "author": "",
