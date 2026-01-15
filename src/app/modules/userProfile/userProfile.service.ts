@@ -139,17 +139,15 @@ const updateUserProfileIntoDB = async (
     profile.embeddingText = updatedSemanticText;
     profile.embeddingDirty = true;
   }
-  const result = await profile.save();
+
+  // save updated job info
+  await profile.save();
 
   if (profile.embeddingDirty) {
-    // TODO: add task to queue for profile embedding
-
-    console.log("yes embedding is changed!");
-
     // submit profile embedding background job
     embeddingQueue.add(
       "profile",
-      { jobId: profile._id },
+      { profileId: profile._id },
       {
         attempts: 3,
         backoff: {
@@ -162,7 +160,7 @@ const updateUserProfileIntoDB = async (
     );
   }
 
-  return result;
+  return "Profile is updated sucessfull";
 };
 
 /**

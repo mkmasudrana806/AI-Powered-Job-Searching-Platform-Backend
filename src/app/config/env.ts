@@ -21,6 +21,7 @@ const config = {
   cloudinary_name: process.env.CLOUDINARY_NAME,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_secret_key: process.env.CLOUDINARY_SECRET_KEY,
+  embedding_model_name: process.env.EMBEDDING_MODEL_NAME,
 };
 
 export default config;

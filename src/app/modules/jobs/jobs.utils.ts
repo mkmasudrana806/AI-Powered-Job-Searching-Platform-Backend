@@ -175,21 +175,20 @@ export const validateJobBusinessRules = (job: Partial<TJob>) => {
   }
 };
 
-// ----------------- build Embedding text --------------
-export const buildEmbeddingText = (job: any): string => {
-  const responsibilitiesText = job.responsibilities
-    .map((r: string) => `- ${r}`)
-    .join("\n");
+// ----------------- build job Embedding text --------------
+export const buildJobEmbeddingText = (job: Partial<TJob>): string => {
+  const responsibilitiesText =
+    job.responsibilities?.length ?? [].map((r: string) => `- ${r}`).join("\n");
 
-  const skillsText = job.requiredSkills.join(", ");
+  const skillsText = job.requiredSkills?.length ?? [].join(", ");
+  const qualifications = job.qualifications?.text;
+
   const embeddingText = `
     Job Title: ${job.title}
     Job Description: ${job.description}
     Responsibilities: ${responsibilitiesText}
     Required Skills: ${skillsText}
-    Qualifications: ${job.qualifications.text}
+    Qualifications: ${qualifications}
   `;
   return embeddingText;
 };
-
-

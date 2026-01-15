@@ -1,8 +1,26 @@
 import { Worker } from "bullmq";
 import embeddingWorker from "./app/jobs/workers/embedding.worker";
+import mongoose from "mongoose";
+import config from "./app/config/env";
 
 const allWorkers: Worker[] = [embeddingWorker];
 
+// for this workers process, we connect db
+main().catch((err) => console.log(err));
+async function main() {
+  try {
+    await mongoose.connect(config.database_url as string);
+    // await mongoose.connect("mongodb://127.0.0.1:27017/job");
+    console.log("Database is connected for worker process!");
+  } catch (error) {
+    console.log(
+      "Error while connecting to Database for Workers process!",
+      error
+    );
+  }
+}
+
+// common logs for all worker
 allWorkers.forEach((worker) => {
   // worker is connected
   worker.on("ready", () => {

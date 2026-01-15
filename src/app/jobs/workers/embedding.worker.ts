@@ -1,5 +1,7 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
+import { profileEmbeddingHandler } from "../workerHandlers/profile.worker.handler";
+import { jobEmbeddingHandler } from "../workerHandlers/job.worker.handler";
 
 console.log("Embedding worker is booting...");
 
@@ -11,7 +13,9 @@ const embeddingWorker = new Worker(
   async (job) => {
     switch (job.name) {
       case "profile":
-        return "Call profile embedding function here";
+        return await profileEmbeddingHandler(job.data.profileId);
+      case "job":
+        return await jobEmbeddingHandler(job.data.jobId);
     }
   },
   {
@@ -25,23 +29,30 @@ embeddingWorker.on("active", (job, prev) => {
   console.log(`${job.name.toUpperCase()} embedding is active`);
 });
 
-// any job completed
-embeddingWorker.on("completed", (job, result) => {
-  const name: string = job.name;
-  const { jobId } = job.data;
-  console.log(`${name.toUpperCase()} embedding is completed for ID: ${jobId}`);
+// get job id
+const getIdentifier = (job: any) => {
+  const mapping: Record<string, string> = {
+    profile: job.data.profileId,
+    job: job.data.jobId,
+  };
+  return mapping[job.name] || "Unknown ID";
+};
+
+// log on any completed job
+embeddingWorker.on("completed", (job) => {
+  const id = getIdentifier(job);
+  console.log(`${job.name.toUpperCase()} embedding is completed for ID: ${id}`);
 });
 
-// any job failed cases
+// log on any failed job
 embeddingWorker.on("failed", (job, err) => {
-  if (err && job?.name) {
-    console.log(
-      `${job.name.toUpperCase()} embedding is failed for ID: ${
-        job?.data.jobId
-      }. Reason : ${err.message}`
+  if (job) {
+    const id = getIdentifier(job);
+    console.error(
+      `${job.name.toUpperCase()} embedding failed for ID: ${id}. Reason: ${
+        err.message
+      }`
     );
-  } else {
-    console.log("Unknown error on embedding is failed");
   }
 });
 
