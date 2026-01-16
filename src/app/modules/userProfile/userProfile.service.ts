@@ -6,7 +6,7 @@ import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { SCALER_FIELDS_UPDATE } from "./userProfile.constant";
 import {
   crudOperation,
-  generateEmbeddingText,
+  buildProfileEmbeddingText,
   generateHash,
 } from "./userProfile.utils";
 import { embeddingQueue } from "../../jobs/queues/embedding.queue";
@@ -21,7 +21,7 @@ import { embeddingQueue } from "../../jobs/queues/embedding.queue";
  */
 const createUserProfileIntoDB = async (
   userId: string,
-  payload: Partial<TUserProfile>
+  payload: Partial<TUserProfile>,
 ) => {
   // validate object id
   validateObjectIDs({ name: "user id", value: userId });
@@ -48,7 +48,7 @@ const createUserProfileIntoDB = async (
  */
 const updateUserProfileIntoDB = async (
   userId: string,
-  payload: Partial<TUpdateUserProfile>
+  payload: Partial<TUpdateUserProfile>,
 ) => {
   // validate object id
   validateObjectIDs({ name: "user id", value: userId });
@@ -70,7 +70,7 @@ const updateUserProfileIntoDB = async (
   let previousHash: string | undefined = profile.previousHash;
 
   if (!profile?.previousHash) {
-    previousSemanticText = generateEmbeddingText(profile);
+    previousSemanticText = buildProfileEmbeddingText(profile);
     previousHash = generateHash(previousSemanticText);
   }
 
@@ -127,7 +127,7 @@ const updateUserProfileIntoDB = async (
   }
 
   // generate semantic text and hash after applying all update
-  const updatedSemanticText = generateEmbeddingText(profile);
+  const updatedSemanticText = buildProfileEmbeddingText(profile);
   const updatedHash = generateHash(updatedSemanticText);
 
   // if hash changed, update the has and embedding
@@ -156,7 +156,7 @@ const updateUserProfileIntoDB = async (
         },
         removeOnComplete: true,
         removeOnFail: false,
-      }
+      },
     );
   }
 

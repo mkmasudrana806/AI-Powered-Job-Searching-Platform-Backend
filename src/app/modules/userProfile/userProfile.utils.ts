@@ -11,7 +11,7 @@ import crypto from "crypto";
  * @param profile updated profile data (if any semantic field changes)
  * @returns meaning full text
  */
-export const generateEmbeddingText = (
+export const buildProfileEmbeddingText = (
   profile: Partial<TUserProfile>
 ): string => {
   const lines: string[] = [];

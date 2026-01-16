@@ -1,7 +1,9 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
-import { profileEmbeddingHandler } from "../workerHandlers/profile.worker.handler";
-import { jobEmbeddingHandler } from "../workerHandlers/job.worker.handler";
+import {
+  jobEmbeddingHandler,
+  profileEmbeddingHandler,
+} from "../workerHandlers/embedding.handler";
 
 console.log("Embedding worker is booting...");
 
@@ -21,7 +23,7 @@ const embeddingWorker = new Worker(
   {
     connection: redisConnection,
     concurrency: 3,
-  }
+  },
 );
 
 // active job
@@ -51,7 +53,7 @@ embeddingWorker.on("failed", (job, err) => {
     console.error(
       `${job.name.toUpperCase()} embedding failed for ID: ${id}. Reason: ${
         err.message
-      }`
+      }`,
     );
   }
 });
