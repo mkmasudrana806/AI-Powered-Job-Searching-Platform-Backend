@@ -28,12 +28,13 @@ const generateEmbedding = async (text: string) => {
       },
     });
 
-    const embeddings = response.embeddings?.values;
+    const embeddingRes = response.embeddings ?? [];
+    const embeddings = embeddingRes[0].values;
     return embeddings;
   } catch (error) {
     throw new AppError(
       httpStatus.INTERNAL_SERVER_ERROR,
-      "Error in generating Embedding!",
+      "Error in generating Embedding! with : " + error,
     );
   }
 };
