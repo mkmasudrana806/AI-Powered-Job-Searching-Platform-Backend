@@ -1,0 +1,11 @@
+import { Queue } from "bullmq";
+import redisConnection from "../../config/redis";
+
+/**
+ * aplicant match score, rank score and ai notes for a job
+ */
+const applicationMatchRankQueue = new Queue("application-match-queue", {
+  connection: redisConnection,
+});
+
+export default applicationMatchRankQueue;

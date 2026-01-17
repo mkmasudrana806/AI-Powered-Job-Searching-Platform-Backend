@@ -1,9 +1,10 @@
 import { Worker } from "bullmq";
 import embeddingWorker from "./app/jobs/workers/embedding.worker";
+import applicationMatchRankWorker from "./app/jobs/workers/application.matchRank.worker";
 import mongoose from "mongoose";
 import config from "./app/config/env";
 
-const allWorkers: Worker[] = [embeddingWorker];
+const allWorkers: Worker[] = [embeddingWorker, applicationMatchRankWorker];
 
 // for this workers process, we connect db
 main().catch((err) => console.log(err));
@@ -15,7 +16,7 @@ async function main() {
   } catch (error) {
     console.log(
       "Error while connecting to Database for Workers process!",
-      error
+      error,
     );
   }
 }

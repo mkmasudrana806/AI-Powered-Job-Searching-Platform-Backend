@@ -10,6 +10,7 @@ import { UserProfile } from "../userProfile/userProfile.model";
 import { Job } from "../jobs/jobs.model";
 import { Company } from "../companies/companies.model";
 import { buildExperienceSummaryText } from "./applications.utils";
+import applicationMatchRankQueue from "../../jobs/queues/application.matchRank.queue";
 
 /**
  * --------------------- apply job ----------------------
@@ -22,15 +23,16 @@ import { buildExperienceSummaryText } from "./applications.utils";
 const applyJobIntoDB = async (
   jobId: string,
   applicantId: string,
-  payload: Partial<TApplication>
+  payload: Partial<TApplication>,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "job id", value: jobId },
-    { name: "applicant id", value: applicantId }
+    { name: "applicant id", value: applicantId },
   );
 
-  // check user profile created and exist required fields like headline, resumeUrl and skills for snapshot
+  // check user profile created and exist required fields like headline, and skills for snapshot
+
   const userProfile = await UserProfile.findOne({
     user: applicantId,
     isDeleted: false,
@@ -38,16 +40,17 @@ const applyJobIntoDB = async (
   if (!userProfile) {
     throw new AppError(httpStatus.NOT_FOUND, "Your profile not found!");
   }
+  // headline mandatory to apply
   if (!userProfile.headline) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Update your profile and headline"
+      "Update your profile and headline",
     );
   }
+  // skills mandatory to apply
   if (!userProfile.skills?.length) {
     throw new AppError(httpStatus.BAD_REQUEST, "Add skills to your profile");
   }
-
 
   // job must exist and be open
   const job = await Job.findById(jobId).select("status company");
@@ -68,13 +71,13 @@ const applyJobIntoDB = async (
   if (isCompanyMember) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      "Company members cannot apply to their own job"
+      "Company members cannot apply to their own job",
     );
   }
 
   // build experience summary text
   const experienceSummaryText = buildExperienceSummaryText(
-    userProfile.experience ?? []
+    userProfile.experience ?? [],
   );
 
   // new application data
@@ -99,7 +102,19 @@ const applyJobIntoDB = async (
   };
 
   const application = await Application.create(newPpplicationData);
-  
+
+  // run background job match score, rank score, and aiNotes
+  applicationMatchRankQueue.add(
+    "application-match-rank-queue",
+    { applicationId: application._id },
+    {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 30000,
+      },
+    },
+  );
 
   return {
     applicationId: application._id,
@@ -115,14 +130,14 @@ const applyJobIntoDB = async (
  */
 const getMyApplicationsFromDB = async (
   applicantId: string,
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
 ) => {
   // validate object ids
   validateObjectIDs({ name: "applicant id", value: applicantId });
 
   const applicationQuery = new QueryBuilder<TApplication>(
     Application.find({ applicant: applicantId }),
-    query
+    query,
   ).fieldsLimiting();
 
   const meta = await applicationQuery.countTotal();
@@ -142,12 +157,12 @@ const getMyApplicationsFromDB = async (
  */
 const withdrawApplicationFromDB = async (
   applicationId: string,
-  userId: string
+  userId: string,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "job id", value: userId },
-    { name: "applicantion id", value: applicationId }
+    { name: "applicantion id", value: applicationId },
   );
 
   // atomic action, avoid race condition
@@ -168,13 +183,13 @@ const withdrawApplicationFromDB = async (
       },
       withdrawnAt: new Date(),
     },
-    { new: true }
+    { new: true },
   );
 
   if (!result) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Application cannot be withdrawn"
+      "Application cannot be withdrawn",
     );
   }
 
@@ -190,16 +205,16 @@ const withdrawApplicationFromDB = async (
 const getApplicationsForAJobFromDB = async (
   companyId: string,
   jobId: string,
-  query: Record<string, unknown>
+  query: Record<string, unknown>,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "job id", value: jobId },
-    { name: "company id", value: companyId }
+    { name: "company id", value: companyId },
   );
   const applicationQuery = new QueryBuilder<TApplication>(
     Application.find({ company: companyId, job: jobId }),
-    query
+    query,
   );
   const meta = await applicationQuery.countTotal();
   const data = await applicationQuery.modelQuery;
@@ -220,13 +235,13 @@ const updateApplicationStatusIntoDB = async (
   companyId: string,
   applicationId: string,
   userId: string,
-  payload: TApplicationStatus
+  payload: TApplicationStatus,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "company id", value: companyId },
     { name: "application id", value: applicationId },
-    { name: "user id", value: userId }
+    { name: "user id", value: userId },
   );
 
   // read application status
@@ -246,7 +261,7 @@ const updateApplicationStatusIntoDB = async (
   if (!allowedNextStatuses.includes(payload.status)) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `Invalid status transition from '${application.status}' to '${payload.status}'`
+      `Invalid status transition from '${application.status}' to '${payload.status}'`,
     );
   }
 
@@ -266,13 +281,13 @@ const updateApplicationStatusIntoDB = async (
         },
       },
     },
-    { new: true }
+    { new: true },
   );
 
   if (!updatedApplication) {
     throw new AppError(
       httpStatus.CONFLICT,
-      "Application status was updated by another process"
+      "Application status was updated by another process",
     );
   }
 
@@ -288,12 +303,12 @@ const updateApplicationStatusIntoDB = async (
  */
 const getMySingleApplicationFromDB = async (
   applicationId: string,
-  applicantId: string
+  applicantId: string,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "application id", value: applicationId },
-    { name: "applicant id", value: applicantId }
+    { name: "applicant id", value: applicantId },
   );
 
   // create pipeline as populate less efficient
