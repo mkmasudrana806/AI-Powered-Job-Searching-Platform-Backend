@@ -39,8 +39,43 @@ const generateEmbedding = async (text: string) => {
   }
 };
 
+/**
+ * ---------- generate any content with Gemini ---------------
+ *
+ * @param userPrompt user prompt
+ * @param systemPrompt system prompt (optional)
+ * @returns
+ */
+const generateContent = async (userPrompt: string, systemPrompt?: string) => {
+  // system instruction
+  const systemIns = systemPrompt
+    ? {
+        role: "system",
+        parts: [{ text: systemPrompt }],
+      }
+    : undefined;
+
+  // push user prompt alwasy
+  const userIns = {
+    role: "user",
+    parts: [{ text: userPrompt }],
+  };
+
+  const result = await client.models.generateContent({
+    model: config.content_generate_model_name as string,
+    config: {
+      systemInstruction: systemIns,
+    },
+    contents: userIns,
+  });
+
+  const content = result?.candidates?.[0].content?.parts;
+  return content?.[0];
+};
+
 const aiServices = {
   generateEmbedding,
+  generateContent,
 };
 
 export default aiServices;

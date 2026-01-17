@@ -1,10 +1,5 @@
 import { Types } from "mongoose";
 import { Application } from "../../modules/applications/applications.model";
-import AppError from "../../utils/AppError";
-import httpStatus from "http-status";
-import cosineSimilarity from "../../utils/consineSimilarityMatching";
-import { TJob } from "../../modules/jobs/jobs.interface";
-import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 
 export const getApplicationDetails = async (applicationId: string) => {
   const pipeline = [
@@ -67,16 +62,5 @@ export const getApplicationDetails = async (applicationId: string) => {
   const result = await Application.aggregate(pipeline);
   const application = result[0];
 
-  const job: Partial<TJob> = application.job;
-  const profile: Partial<TUserProfile> = application.profile;
-
-  // check both profile and job has embedding data
-  if (!job?.embedding || !profile?.embedding) {
-    throw new AppError(httpStatus.BAD_REQUEST, "Embedding missing!");
-  }
-
-  // calculate match score
-  const matchScore = cosineSimilarity(job.embedding, profile.embedding);
-  
-  console.log("matcing score: ", matchScore);
+  return application;
 };
