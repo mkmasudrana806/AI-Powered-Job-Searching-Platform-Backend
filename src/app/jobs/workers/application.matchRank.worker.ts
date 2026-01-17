@@ -1,11 +1,13 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
+import { getApplicationDetails } from "../workerHandlers/application.matchRank.handler";
 
 const applicationMatchRankWorker = new Worker(
   "application-match-queue",
   async (job) => {
-    console.log("Job Name: ", job.name, "Job data: ", job.data);
-    return "Yes at application time job is running!";
+    const applicationId = job.data.applicationId;
+    // fetch application data with profile and job data
+    await getApplicationDetails(applicationId);
   },
   {
     connection: redisConnection,
