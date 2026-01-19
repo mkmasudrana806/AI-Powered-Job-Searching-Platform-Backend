@@ -38,6 +38,17 @@ export type TQualifications = {
   text: string;
 };
 
+export type TRankingConfig = {
+  name: string;
+  matchWeight: number;
+  titleMatch: number;
+  skills: number;
+  experienceYears: number;
+  employmentType: number;
+  fieldOfStudy: number;
+  recency: number;
+};
+
 export type TJob = {
   company: Types.ObjectId;
   createdBy: Types.ObjectId;
@@ -53,6 +64,7 @@ export type TJob = {
   embedding?: number[];
   embeddingModel?: string;
   status: TJOB_STATUS;
+  rankingConfig: TRankingConfig[];
   isDeleted: boolean;
   expiresAt: Date;
   closedAt?: Date;
