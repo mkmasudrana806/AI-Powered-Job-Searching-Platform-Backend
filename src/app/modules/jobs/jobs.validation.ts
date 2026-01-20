@@ -50,6 +50,16 @@ const createJobSchema = z.object({
   experienceLevel: z.enum(["junior", "mid", "senior", "lead"]),
   employmentType: z.enum(["full-time", "part-time", "contract", "internship"]),
   qualifications: qualificationSchema,
+  rankingConfig: z.object({
+    name: z.string().optional().default("default"),
+    matchScore: z.number().optional().default(0.4),
+    titleMatch: z.number().optional().default(0.1),
+    skills: z.number().optional().default(0.2),
+    experienceYears: z.number().optional().default(0.15),
+    employmentType: z.number().optional().default(0.05),
+    fieldOfStudy: z.number().optional().default(0.05),
+    recency: z.number().optional().default(0.05),
+  }),
   salary: salarySchema,
   location: locationSchema,
   expiresAt: z.date().optional(),
@@ -83,7 +93,7 @@ const changeJobStatusValidationSchema = z.object({
 
 // -------- update job --------
 const updateJobValidationSchema = z.object({
-  body: createJobSchema.partial().strict("No unknown keys allowed"),
+  body: createJobSchema.partial().strict(),
 });
 
 export const JobValidations = {

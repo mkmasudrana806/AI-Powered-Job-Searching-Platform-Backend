@@ -40,7 +40,7 @@ export type TQualifications = {
 
 export type TRankingConfig = {
   name: string;
-  matchWeight: number;
+  matchScore: number;
   titleMatch: number;
   skills: number;
   experienceYears: number;
@@ -64,7 +64,7 @@ export type TJob = {
   embedding?: number[];
   embeddingModel?: string;
   status: TJOB_STATUS;
-  rankingConfig: TRankingConfig[];
+  rankingConfig: TRankingConfig;
   isDeleted: boolean;
   expiresAt: Date;
   closedAt?: Date;

@@ -50,7 +50,7 @@ export type TUserProfile = {
   projects?: TProject[];
 
   // career metadata
-  totalYearsOfExperience?: number;
+  totalYearsOfExperience: number;
   currentRole?: string;
   preferredRoles?: string[];
   employmentType?: "full-time" | "part-time" | "contract" | "internship";

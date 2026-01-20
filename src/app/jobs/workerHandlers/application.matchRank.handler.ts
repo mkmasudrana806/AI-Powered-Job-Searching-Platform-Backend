@@ -1,6 +1,12 @@
 import { Types } from "mongoose";
 import { Application } from "../../modules/applications/applications.model";
 
+/**
+ * ------------ fetch application details with job and profile ------------
+ *
+ * @param applicationId applicant id for getting details
+ * @returns found application data
+ */
 export const getApplicationDetails = async (applicationId: string) => {
   const pipeline = [
     // find application
@@ -29,34 +35,7 @@ export const getApplicationDetails = async (applicationId: string) => {
         as: "profile",
       },
     },
-    { $unwind: "$profile" },
-
-    // select required filed
-    {
-      $project: {
-        _id: 1,
-        appliedAt: 1,
-        status: 1,
-        matchScore: 1,
-        rankingScore: 1,
-        aiNotes: 1,
-        resumeUrl: 1,
-
-        applicantProfileSnapshot: 1,
-
-        "job._id": 1,
-        "job.title": 1,
-        "job.experienceLevel": 1,
-        "job.location": 1,
-        "job.embedding": 1,
-
-        "profile.headline": 1,
-        "profile.skills": 1,
-        "profile.totalYearsOfExperience": 1,
-        "profile.location": 1,
-        "profile.embedding": 1,
-      },
-    },
+    { $unwind: "$profile" }
   ];
 
   const result = await Application.aggregate(pipeline);

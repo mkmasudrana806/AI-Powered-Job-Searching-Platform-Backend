@@ -1,5 +1,16 @@
 import { model, Schema } from "mongoose";
-import { TJob } from "./jobs.interface";
+import { TJob, TRankingConfig } from "./jobs.interface";
+
+const rankingConfigSchema = new Schema<TRankingConfig>({
+  name: { type: String, required: true },
+  matchScore: { type: Number, default: 55 },
+  titleMatch: { type: Number, default: 0 },
+  skills: { type: Number, default: 20 },
+  experienceYears: { type: Number, default: 10 },
+  employmentType: { type: Number, default: 10 },
+  recency: { type: Number, default: 5 },
+  fieldOfStudy: { type: Number, default: 0 },
+});
 
 const JobSchema = new Schema<TJob>(
   {
@@ -85,6 +96,11 @@ const JobSchema = new Schema<TJob>(
       type: String,
     },
 
+    rankingConfig: {
+      type: rankingConfigSchema,
+      required: true,
+    },
+
     status: {
       type: String,
       enum: ["draft", "open", "closed", "archived"],
@@ -103,7 +119,7 @@ const JobSchema = new Schema<TJob>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 export const Job = model<TJob>("Job", JobSchema);

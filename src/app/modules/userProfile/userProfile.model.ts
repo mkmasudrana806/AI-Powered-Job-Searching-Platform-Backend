@@ -83,6 +83,7 @@ const userProfileSchema = new Schema<TUserProfile>(
       type: Number,
       min: 0,
       max: 30,
+      default: 0,
     },
 
     currentRole: {
@@ -117,8 +118,7 @@ const userProfileSchema = new Schema<TUserProfile>(
       select: false,
     },
     embeddingText: {
-       type: String,
-
+      type: String,
     },
     embeddingModel: {
       type: String,
@@ -140,7 +140,7 @@ const userProfileSchema = new Schema<TUserProfile>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // compound indexes for recruiter search
@@ -149,5 +149,5 @@ userProfileSchema.index({ "location.country": 1 });
 
 export const UserProfile = model<TUserProfile>(
   "UserProfile",
-  userProfileSchema
+  userProfileSchema,
 );

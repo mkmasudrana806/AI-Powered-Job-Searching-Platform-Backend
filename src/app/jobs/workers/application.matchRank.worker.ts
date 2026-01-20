@@ -8,6 +8,7 @@ import { TJob } from "../../modules/jobs/jobs.interface";
 import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import aiServices from "../../ai/aiService";
 import getAINotesPromt from "../../ai/prompts/aiNotes.prompt";
+import { CandidateRanking } from "../workerHandlers/worker.handler.utils";
 
 const applicationMatchRankWorker = new Worker(
   "application-match-queue",
@@ -16,8 +17,8 @@ const applicationMatchRankWorker = new Worker(
 
     // fetch application data with profile and job data
     const application = await getApplicationDetails(applicationId);
-    const jobData: Partial<TJob> = application.job;
-    const profile: Partial<TUserProfile> = application.profile;
+    const jobData: TJob = application.job;
+    const profile: TUserProfile = application.profile;
 
     // check both profile and job has embedding data
     if (!jobData?.embedding || !profile?.embedding) {
@@ -36,7 +37,14 @@ const applicationMatchRankWorker = new Worker(
     // ai notes
     const aiNotes = await aiServices.generateContent(userPrompt, systemPrompt);
 
-    // TODO: application rank score
+    // application rank score
+    const rankingScore = new CandidateRanking().calculate(
+      profile,
+      jobData,
+      matchScore,
+    );
+
+    
   },
   {
     connection: redisConnection,
