@@ -75,11 +75,9 @@ export class CandidateRanking {
 
     // rank score between 0 to 1
     const rankScore =
-      totalPossibleWeight > 0
-        ? parseFloat((totalWeightedScore / totalPossibleWeight).toFixed(4))
-        : 0;
+      totalPossibleWeight > 0 ? totalWeightedScore / totalPossibleWeight : 0;
 
-    return rankScore;
+    return Number(rankScore.toFixed(2));
   }
 
   // ---------- calculate headline and title partial match ----------

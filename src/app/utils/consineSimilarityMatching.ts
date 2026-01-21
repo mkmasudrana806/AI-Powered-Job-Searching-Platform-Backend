@@ -15,9 +15,15 @@ const cosineSimilarity = (a: number[], b: number[]): number => {
     normB += b[i] * b[i];
   }
 
+  const dinominator = Math.sqrt(normA) * Math.sqrt(normB);
+
+  // avoid division by zero
+  if (dinominator === 0) return 0;
+
+  const rawSimilarity = dot / dinominator;
+
   // conver to fixed size and number type and percentage
-  const matchingScore =
-    Number((dot / (Math.sqrt(normA) * Math.sqrt(normB))).toFixed(4)) * 100;
+  const matchingScore = Number((rawSimilarity * 100).toFixed(2));
 
   return matchingScore;
 };

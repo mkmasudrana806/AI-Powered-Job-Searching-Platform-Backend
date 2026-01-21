@@ -1,6 +1,6 @@
 import { Worker } from "bullmq";
 import embeddingWorker from "./app/jobs/workers/embedding.worker";
-import applicationMatchRankWorker from "./app/jobs/workers/application.matchRank.worker";
+import applicationMatchRankWorker from "./app/jobs/workers/application.worker";
 import mongoose from "mongoose";
 import config from "./app/config/env";
 

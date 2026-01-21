@@ -10,7 +10,7 @@ import { UserProfile } from "../userProfile/userProfile.model";
 import { Job } from "../jobs/jobs.model";
 import { Company } from "../companies/companies.model";
 import { buildExperienceSummaryText } from "./applications.utils";
-import applicationMatchRankQueue from "../../jobs/queues/application.matchRank.queue";
+import applicationMatchRankQueue from "../../jobs/queues/application.queue";
 
 /**
  * --------------------- apply job ----------------------
@@ -105,7 +105,7 @@ const applyJobIntoDB = async (
 
   // run background job match score, rank score, and aiNotes
   applicationMatchRankQueue.add(
-    "application-match-rank-queue",
+    "application-match-rank",
     { applicationId: application._id },
     {
       attempts: 3,
