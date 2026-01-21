@@ -9,6 +9,8 @@ import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import aiServices from "../../ai/aiService";
 import getAINotesPromt from "../../ai/prompts/aiNotes.prompt";
 import { CandidateRanking } from "../workerHandlers/worker.handler.utils";
+import { Application } from "../../modules/applications/applications.model";
+import { Types } from "mongoose";
 
 const applicationMatchRankWorker = new Worker(
   "application-match-queue",
@@ -44,8 +46,20 @@ const applicationMatchRankWorker = new Worker(
       matchScore,
     );
 
-    
+    // save application into database
+    await Application.findByIdAndUpdate(
+      applicationId,
+      {
+        matchScore,
+        rankingScore,
+        aiNotes,
+      },
+      { new: true },
+    );
+
+    return "Application Match/Rank Score Updated Successfully";
   },
+
   {
     connection: redisConnection,
     concurrency: 3,

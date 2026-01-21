@@ -66,11 +66,14 @@ const generateContent = async (userPrompt: string, systemPrompt?: string) => {
     config: {
       systemInstruction: systemIns,
     },
-    contents: userIns,
+    contents: [userIns], // content inside array
   });
 
-  const content = result?.candidates?.[0].content?.parts;
-  return content?.[0];
+  // extract content part
+  const contentPart = result?.candidates?.[0]?.content?.parts?.[0];
+
+  // return the text part and optionally handle if contentPart is undefined
+  return contentPart && "text" in contentPart ? contentPart.text : "";
 };
 
 const aiServices = {

@@ -17,7 +17,7 @@ const cosineSimilarity = (a: number[], b: number[]): number => {
 
   // conver to fixed size and number type and percentage
   const matchingScore =
-    Number((dot / (Math.sqrt(normA) * Math.sqrt(normB))).toFixed(2)) * 100;
+    Number((dot / (Math.sqrt(normA) * Math.sqrt(normB))).toFixed(4)) * 100;
 
   return matchingScore;
 };
