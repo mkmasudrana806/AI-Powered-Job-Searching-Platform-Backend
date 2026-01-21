@@ -36,7 +36,7 @@ const publishDraftJob = asyncHandler(async (req, res) => {
     company,
     userId,
     jobId,
-    data
+    data,
   );
 
   sendResponse(res, {
@@ -75,7 +75,7 @@ const changeJobStatus = asyncHandler(async (req, res) => {
     company,
     jobId,
     userId,
-    status as TJOB_STATUS
+    status as TJOB_STATUS,
   );
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -98,6 +98,27 @@ const updateJob = asyncHandler(async (req, res) => {
     statusCode: httpStatus.OK,
     success: true,
     message: "Job updated successfully",
+    data: null,
+  });
+});
+
+/**
+ * ------------------- update job ranking config -------------------
+ */
+const updateJobRankingConfig = asyncHandler(async (req, res) => {
+  const { companyId } = req.company;
+  const { jobId } = req.params;
+  const { rankingConfig } = req.body;
+  await JobServices.updateJobRankingConfigIntoDB(
+    companyId,
+    jobId,
+    rankingConfig,
+  );
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Job ranking config updated successfully",
     data: null,
   });
 });
@@ -140,6 +161,7 @@ export const JobControllers = {
   publishDraftJob,
   changeJobStatus,
   updateJob,
+  updateJobRankingConfig,
   deleteJob,
   getCompanyJobs,
 };

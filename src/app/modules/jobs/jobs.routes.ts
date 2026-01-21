@@ -14,7 +14,7 @@ router.post(
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
   validateRequest(JobValidations.createJobValidationSchema),
-  JobControllers.createJob
+  JobControllers.createJob,
 );
 
 // save job as draft
@@ -23,7 +23,7 @@ router.post(
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
   validateRequest(JobValidations.draftJobValidationSchema),
-  JobControllers.createJob
+  JobControllers.createJob,
 );
 
 // published draft job
@@ -32,7 +32,7 @@ router.patch(
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
   validateRequest(JobValidations.updateJobValidationSchema),
-  JobControllers.publishDraftJob
+  JobControllers.publishDraftJob,
 );
 
 // change job status to open, closed, archived
@@ -40,21 +40,21 @@ router.patch(
   "/companies/:companyId/jobs/:jobId/open",
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
-  JobControllers.changeJobStatus
+  JobControllers.changeJobStatus,
 );
 
 router.patch(
   "/companies/:companyId/jobs/:jobId/close",
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
-  JobControllers.changeJobStatus
+  JobControllers.changeJobStatus,
 );
 
 router.patch(
   "/companies/:companyId/jobs/:jobId/archive",
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
-  JobControllers.changeJobStatus
+  JobControllers.changeJobStatus,
 );
 
 //  Update job
@@ -63,7 +63,16 @@ router.patch(
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
   validateRequest(JobValidations.updateJobValidationSchema),
-  JobControllers.updateJob
+  JobControllers.updateJob,
+);
+
+// update job ranking cinfiguration
+router.patch(
+  "/companies/:companyId/jobs/:jobId/ranking-configuration",
+  auth("user"),
+  requireCompanyAccess("owner", "recruiter"),
+  validateRequest(JobValidations.updateJobRankConfigSchema),
+  JobControllers.updateJobRankingConfig,
 );
 
 // Delete job
@@ -71,7 +80,7 @@ router.delete(
   "/companies/:companyId/jobs/:jobId",
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
-  JobControllers.deleteJob
+  JobControllers.deleteJob,
 );
 
 // Get all jobs of a company (this is like draft, inactive, closed, jobs)
@@ -79,7 +88,7 @@ router.get(
   "/companies/:companyId/jobs",
   auth("user"),
   requireCompanyAccess("owner", "recruiter"),
-  JobControllers.getCompanyJobs
+  JobControllers.getCompanyJobs,
 );
 
 // ------------------- public routes -------------------

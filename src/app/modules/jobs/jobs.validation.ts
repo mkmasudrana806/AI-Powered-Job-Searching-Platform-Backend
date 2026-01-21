@@ -42,6 +42,18 @@ const qualificationSchema = z.object({
   }),
 });
 
+// ranking config
+const rankingConfigSchema = z.object({
+  name: z.string(),
+  matchScore: z.number().optional().default(0.4),
+  titleMatch: z.number().optional().default(0.05),
+  skills: z.number().optional().default(0.2),
+  experienceYears: z.number().optional().default(0.15),
+  employmentType: z.number().optional().default(0.1),
+  fieldOfStudy: z.number().optional().default(0.05),
+  recency: z.number().optional().default(0.05),
+});
+
 const createJobSchema = z.object({
   title: z.string(),
   description: z.string(),
@@ -50,16 +62,7 @@ const createJobSchema = z.object({
   experienceLevel: z.enum(["junior", "mid", "senior", "lead"]),
   employmentType: z.enum(["full-time", "part-time", "contract", "internship"]),
   qualifications: qualificationSchema,
-  rankingConfig: z.object({
-    name: z.string().optional().default("default"),
-    matchScore: z.number().optional().default(0.4),
-    titleMatch: z.number().optional().default(0.1),
-    skills: z.number().optional().default(0.2),
-    experienceYears: z.number().optional().default(0.15),
-    employmentType: z.number().optional().default(0.05),
-    fieldOfStudy: z.number().optional().default(0.05),
-    recency: z.number().optional().default(0.05),
-  }),
+  rankingConfig: rankingConfigSchema,
   salary: salarySchema,
   location: locationSchema,
   expiresAt: z.date().optional(),
@@ -96,9 +99,17 @@ const updateJobValidationSchema = z.object({
   body: createJobSchema.partial().strict(),
 });
 
+// -------- update job ranking configuration --------
+const updateJobRankConfigSchema = z.object({
+  body: z.object({
+    rankingConfig: rankingConfigSchema,
+  }),
+});
+
 export const JobValidations = {
   createJobValidationSchema,
   updateJobValidationSchema,
+  updateJobRankConfigSchema,
   changeJobStatusValidationSchema,
   draftJobValidationSchema,
 };

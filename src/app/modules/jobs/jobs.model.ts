@@ -2,13 +2,13 @@ import { model, Schema } from "mongoose";
 import { TJob, TRankingConfig } from "./jobs.interface";
 
 const rankingConfigSchema = new Schema<TRankingConfig>({
-  name: { type: String, required: true },
-  matchScore: { type: Number, default: 55 },
+  name: { type: String, required: true, unique: true, default: "default" },
   titleMatch: { type: Number, default: 0 },
-  skills: { type: Number, default: 20 },
-  experienceYears: { type: Number, default: 10 },
-  employmentType: { type: Number, default: 10 },
-  recency: { type: Number, default: 5 },
+  matchScore: { type: Number, default: 0.55 },
+  skills: { type: Number, default: 0.2 },
+  experienceYears: { type: Number, default: 0.1 },
+  employmentType: { type: Number, default: 0.1 },
+  recency: { type: Number, default: 0.05 },
   fieldOfStudy: { type: Number, default: 0 },
 });
 

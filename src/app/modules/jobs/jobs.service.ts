@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import { TJob, TJOB_STATUS } from "./jobs.interface";
+import { TJob, TJOB_STATUS, TRankingConfig } from "./jobs.interface";
 import { Job } from "./jobs.model";
 import { buildJobEmbeddingText, validateJobBusinessRules } from "./jobs.utils";
 import AppError from "../../utils/AppError";
@@ -19,12 +19,12 @@ import { embeddingQueue } from "../../jobs/queues/embedding.queue";
 const createJobIntoDB = async (
   companyId: string,
   createdBy: string,
-  payload: TJob
+  payload: TJob,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "company id", value: companyId },
-    { name: "user id", value: createdBy }
+    { name: "user id", value: createdBy },
   );
 
   // ----------- save job as draft --------------
@@ -62,7 +62,7 @@ const createJobIntoDB = async (
       },
       removeOnComplete: true,
       removeOnFail: false,
-    }
+    },
   );
 
   return result;
@@ -81,12 +81,12 @@ const publishDraftJobIntoDB = async (
   company: TCompanyMiddlewareData,
   userId: string,
   jobId: string,
-  payload: Partial<TJob>
+  payload: Partial<TJob>,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "job id", value: jobId },
-    { name: "user id", value: userId }
+    { name: "user id", value: userId },
   );
 
   const { companyId, userRoleInCompany } = company;
@@ -101,7 +101,7 @@ const publishDraftJobIntoDB = async (
   if (existingJob.status !== "draft") {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Only draft jobs can be published"
+      "Only draft jobs can be published",
     );
   }
 
@@ -112,7 +112,7 @@ const publishDraftJobIntoDB = async (
   ) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      "Only the creator or owner can publish this job"
+      "Only the creator or owner can publish this job",
     );
   }
 
@@ -137,7 +137,7 @@ const publishDraftJobIntoDB = async (
 
   const updated = await Job.updateOne(
     { _id: jobId, company: companyId },
-    { $set: updatedJob }
+    { $set: updatedJob },
   );
 
   if (updated.matchedCount === 0) {
@@ -158,12 +158,12 @@ const changeJobStatusIntoDB = async (
   company: TCompanyMiddlewareData,
   jobId: string,
   userId: string,
-  status: TJOB_STATUS
+  status: TJOB_STATUS,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "job id", value: jobId },
-    { name: "user id", value: userId }
+    { name: "user id", value: userId },
   );
   const { companyId, userRoleInCompany } = company;
 
@@ -177,7 +177,7 @@ const changeJobStatusIntoDB = async (
   // fetch existing job
   const job = await Job.findOne(
     { _id: jobId, company: companyId },
-    { status: 1, createdBy: 1 }
+    { status: 1, createdBy: 1 },
   );
 
   if (!job) {
@@ -191,7 +191,7 @@ const changeJobStatusIntoDB = async (
   ) {
     throw new AppError(
       httpStatus.FORBIDDEN,
-      "Only the creator or owner can change the job status"
+      "Only the creator or owner can change the job status",
     );
   }
 
@@ -200,7 +200,7 @@ const changeJobStatusIntoDB = async (
   if (!allowedNextStatuses.includes(status)) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      `Invalid status transition from ${job.status} to ${status}`
+      `Invalid status transition from ${job.status} to ${status}`,
     );
   }
 
@@ -231,7 +231,7 @@ const changeJobStatusIntoDB = async (
     },
     {
       $set: updatePayload,
-    }
+    },
   );
 
   return "Job status updated successfully";
@@ -247,12 +247,12 @@ const changeJobStatusIntoDB = async (
 const updateJobIntoDB = async (
   companyId: string,
   jobId: string,
-  payload: Partial<TJob>
+  payload: Partial<TJob>,
 ) => {
   // validate object ids
   validateObjectIDs(
     { name: "company id", value: companyId },
-    { name: "job id", value: jobId }
+    { name: "job id", value: jobId },
   );
 
   // apply business rules validation
@@ -281,7 +281,7 @@ const updateJobIntoDB = async (
 
   const updated = await Job.updateOne(
     { _id: jobId, company: companyId },
-    { $set: payload }
+    { $set: payload },
   );
 
   if (updated.matchedCount === 0) {
@@ -289,6 +289,43 @@ const updateJobIntoDB = async (
   }
 
   return "Job updated successfully";
+};
+
+const updateJobRankingConfigIntoDB = async (
+  companyId: string,
+  jobId: string,
+  payload: TRankingConfig,
+) => {
+  // validate object ids
+  validateObjectIDs(
+    { name: "company id", value: companyId },
+    { name: "job id", value: jobId },
+  );
+
+  // validate that weights sum to 1.0
+  const totalWeight =
+    (payload.matchScore || 0) +
+    (payload.titleMatch || 0) +
+    (payload.skills || 0) +
+    (payload.experienceYears || 0) +
+    (payload.employmentType || 0) +
+    (payload.fieldOfStudy || 0) +
+    (payload.recency || 0);
+
+  if (totalWeight > 1.0) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Total weights sum expected 1.0 but got " + totalWeight.toFixed(2),
+    );
+  }
+  const updated = await Job.updateOne(
+    { _id: jobId, company: companyId },
+    { $set: { rankingConfig: payload } },
+  );
+  if (updated.matchedCount === 0) {
+    throw new AppError(httpStatus.NOT_FOUND, "Job not found");
+  }
+  return "Job ranking config updated successfully";
 };
 
 /**
@@ -301,7 +338,7 @@ const deleteJobFromDB = async (companyId: string, jobId: string) => {
   // validate object ids
   validateObjectIDs(
     { name: "company id", value: companyId },
-    { name: "job id", value: jobId }
+    { name: "job id", value: jobId },
   );
 
   const deleted = await Job.findOneAndUpdate(
@@ -312,7 +349,7 @@ const deleteJobFromDB = async (companyId: string, jobId: string) => {
       isDeleted: false,
     },
     { isDeleted: true, isActive: false },
-    { new: true }
+    { new: true },
   );
 
   if (!deleted) {
@@ -340,6 +377,7 @@ export const JobServices = {
   publishDraftJobIntoDB,
   changeJobStatusIntoDB,
   updateJobIntoDB,
+  updateJobRankingConfigIntoDB,
   deleteJobFromDB,
   getCompanyJobsFromDB,
 };
