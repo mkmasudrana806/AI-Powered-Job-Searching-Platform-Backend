@@ -1,6 +1,11 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
-import { applicationMatchaiNoteHandler } from "../workerHandlers/application.handler";
+import {
+  applicantReRankHandler,
+  applicationMatchaiNoteHandler,
+} from "../workerHandlers/application.handler";
+import AppError from "../../utils/AppError";
+import httpStatus from "http-status";
 
 const applicationWorker = new Worker(
   "application-queue",
@@ -10,6 +15,15 @@ const applicationWorker = new Worker(
       // when user applies for a job
       case "application-match-rank":
         return await applicationMatchaiNoteHandler(job.data.applicationId);
+      // when job ranking config is updated
+      // re rank all applicants for a job
+      case "application-re-rank":
+        return await applicantReRankHandler(job.data.jobId);
+      default:
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          `No handler found for ${job.name}`,
+        );
     }
     const applicationId = job.data.applicationId;
   },

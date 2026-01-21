@@ -8,6 +8,7 @@ import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
 import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import { TJob } from "../../modules/jobs/jobs.interface";
+import { Job } from "../../modules/jobs/jobs.model";
 
 /**
  * ------------ fetch application details with job and profile ------------
@@ -87,4 +88,65 @@ export const applicationMatchaiNoteHandler = async (applicationId: string) => {
   );
 
   return "Application Match/Rank Score Updated Successfully";
+};
+
+export const applicantReRankHandler = async (jobId: string) => {
+  const job = await Job.findById(jobId);
+  if (!job) {
+    throw new AppError(httpStatus.NOT_FOUND, "Job not found");
+  }
+
+  // fet all applications for the job with profile data
+  const applications = await Application.aggregate([
+    {
+      $match: {
+        job: new Types.ObjectId(jobId),
+      },
+    },
+    {
+      $lookup: {
+        from: "userprofiles",
+        localField: "applicant",
+        foreignField: "user",
+        as: "profile",
+      },
+    },
+    { $unwind: "$profile" },
+    {
+      $project: {
+        _id: 1,
+        matchScore: 1,
+        "profile.headline": 1,
+        "profile.skills": 1,
+        "profile.experience": 1,
+        "profile.employmentType": 1,
+        "profile.totalYearsOfExperience": 1,
+        "profile.education": 1,
+      },
+    },
+  ]);
+
+  // loop through each application and recalculate rank score only
+  const bulkOps = applications.map((app) => {
+    const profile: TUserProfile = app.profile;
+    const matchScore: number = app.matchScore;
+    const newRankScore = new CandidateRanking().calculate(
+      profile,
+      job,
+      matchScore,
+    );
+
+    return {
+      updateOne: {
+        filter: { _id: app._id },
+        update: { rankingScore: newRankScore },
+      },
+    };
+  });
+
+  if (bulkOps.length > 0) {
+    await Application.bulkWrite(bulkOps);
+  }
+
+  return "Applicant Re-Ranking Completed Successfully";
 };

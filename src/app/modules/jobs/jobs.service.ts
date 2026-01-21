@@ -7,6 +7,7 @@ import httpStatus from "http-status";
 import { TCompanyMiddlewareData } from "../companies/companies.interface";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { embeddingQueue } from "../../jobs/queues/embedding.queue";
+import applicationQueue from "../../jobs/queues/application.queue";
 
 /**
  * ------------------ create job as draft or open ------------------
@@ -315,7 +316,7 @@ const updateJobRankingConfigIntoDB = async (
   if (totalWeight > 1.0) {
     throw new AppError(
       httpStatus.BAD_REQUEST,
-      "Total weights sum expected 1.0 but got " + totalWeight.toFixed(2),
+      "Total weights sum expected 1.0 but got more",
     );
   }
   const updated = await Job.updateOne(
@@ -325,8 +326,22 @@ const updateJobRankingConfigIntoDB = async (
   if (updated.matchedCount === 0) {
     throw new AppError(httpStatus.NOT_FOUND, "Job not found");
   }
-  
-  return "Job ranking config updated successfully";
+
+  // submit background job to re-rank existing applicants
+  // we only rerank, we will not recalculate aiNotes and match score
+  applicationQueue.add(
+    "application-re-rank",
+    { jobId: jobId },
+    {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 5000,
+      },
+    },
+  );
+
+  return "Ranking config updated, re-ranking running....";
 };
 
 /**
