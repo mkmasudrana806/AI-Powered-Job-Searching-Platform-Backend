@@ -325,6 +325,7 @@ const updateJobRankingConfigIntoDB = async (
   if (updated.matchedCount === 0) {
     throw new AppError(httpStatus.NOT_FOUND, "Job not found");
   }
+  
   return "Job ranking config updated successfully";
 };
 

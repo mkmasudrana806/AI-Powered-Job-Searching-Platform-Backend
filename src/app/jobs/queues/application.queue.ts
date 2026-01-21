@@ -4,8 +4,8 @@ import redisConnection from "../../config/redis";
 /**
  * aplicant match score, rank score and ai notes for a job
  */
-const applicationMatchRankQueue = new Queue("application-queue", {
+const applicationQueue = new Queue("application-queue", {
   connection: redisConnection,
 });
 
-export default applicationMatchRankQueue;
+export default applicationQueue;

@@ -2,7 +2,7 @@ import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
 import { applicationMatchaiNoteHandler } from "../workerHandlers/application.handler";
 
-const applicationMatchRankWorker = new Worker(
+const applicationWorker = new Worker(
   "application-queue",
   async (job) => {
     switch (job.name) {
@@ -21,19 +21,19 @@ const applicationMatchRankWorker = new Worker(
 );
 
 // active job
-applicationMatchRankWorker.on("active", (job, prev) => {
+applicationWorker.on("active", (job, prev) => {
   console.log(`${job.name.toUpperCase()} scoring is active`);
 });
 
 // log on any completed job
-applicationMatchRankWorker.on("completed", (job) => {
+applicationWorker.on("completed", (job) => {
   console.log(
     `${job.name.toUpperCase()} scoring is completed for ID: ${job.data.applicationId}`,
   );
 });
 
 // log on any failed job
-applicationMatchRankWorker.on("failed", (job, err) => {
+applicationWorker.on("failed", (job, err) => {
   if (job) {
     console.error(
       `${job.name.toUpperCase()} scoring failed for ID: ${job.data.applicationId}. Reason: ${
@@ -43,4 +43,4 @@ applicationMatchRankWorker.on("failed", (job, err) => {
   }
 });
 
-export default applicationMatchRankWorker;
+export default applicationWorker;
