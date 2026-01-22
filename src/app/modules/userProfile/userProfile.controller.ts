@@ -75,6 +75,9 @@ const getUserPublicProfile = asyncHandler(async (req, res) => {
 });
 
 // =============== ai services ===============
+/**
+ * ------------- resume analysis (resume doctor) -------------
+ */
 const getResumeDoctor = asyncHandler(async (req, res) => {
   const userId = req.user.userId;
   const { jobId } = req.body;

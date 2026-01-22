@@ -27,7 +27,12 @@ const resumeDoctor = z.object({
     .max(3),
 });
 
+const coverLetter = z.object({
+  cover_letter: z.string().describe("The generated cover letter content"),
+});
+
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
+  coverLetter,
 };

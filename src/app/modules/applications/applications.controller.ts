@@ -3,6 +3,7 @@ import httpStatus from "http-status";
 import asyncHandler from "../../utils/asyncHandler";
 import sendResponse from "../../utils/sendResponse";
 import { ApplicationServices } from "./applications.service";
+import coverLetterAiService from "../../ai/jobSeeker/coverLetter.service";
 
 /**
  * ------------------ apply job ------------------
@@ -14,7 +15,7 @@ const applyJob = asyncHandler(async (req: Request, res: Response) => {
   const result = await ApplicationServices.applyJobIntoDB(
     jobId,
     applicantId,
-    payload
+    payload,
   );
 
   sendResponse(res, {
@@ -33,7 +34,7 @@ const getMyApplications = asyncHandler(async (req: Request, res: Response) => {
   const query = req.query;
   const { meta, result } = await ApplicationServices.getMyApplicationsFromDB(
     applicantId,
-    query
+    query,
   );
 
   sendResponse(res, {
@@ -55,7 +56,7 @@ const withdrawApplication = asyncHandler(
 
     const result = await ApplicationServices.withdrawApplicationFromDB(
       applicationId,
-      applicantId
+      applicantId,
     );
 
     sendResponse(res, {
@@ -64,7 +65,7 @@ const withdrawApplication = asyncHandler(
       message: "Applications withdrawn successfully",
       data: result,
     });
-  }
+  },
 );
 
 /**
@@ -80,7 +81,7 @@ const getApplicationsForAJob = asyncHandler(
       await ApplicationServices.getApplicationsForAJobFromDB(
         companyId,
         jobId,
-        query
+        query,
       );
 
     sendResponse(res, {
@@ -90,7 +91,7 @@ const getApplicationsForAJob = asyncHandler(
       meta: meta,
       data: data,
     });
-  }
+  },
 );
 
 /**
@@ -107,7 +108,7 @@ const updateApplicationStatus = asyncHandler(
       companyId,
       applicationId,
       userId,
-      payload
+      payload,
     );
 
     sendResponse(res, {
@@ -116,7 +117,7 @@ const updateApplicationStatus = asyncHandler(
       message: "Applications status changed successfully",
       data: result,
     });
-  }
+  },
 );
 
 /**
@@ -129,7 +130,7 @@ const getSingleApplication = asyncHandler(
 
     const result = await ApplicationServices.getMySingleApplicationFromDB(
       applicationId,
-      userId
+      userId,
     );
 
     sendResponse(res, {
@@ -138,8 +139,25 @@ const getSingleApplication = asyncHandler(
       message: "Application details retrieved successfully",
       data: result,
     });
-  }
+  },
 );
+
+// ========= ai related controller ===========
+/**
+ * ------------- resume analysis (resume doctor) -------------
+ */
+const generateCoverLetter = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+  const jobId = req.params.jobId;
+
+  const result = await coverLetterAiService(userId, jobId);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Cover letter generated successfully",
+    data: result,
+  });
+});
 
 export const ApplicationControllers = {
   applyJob,
@@ -148,4 +166,5 @@ export const ApplicationControllers = {
   getApplicationsForAJob,
   updateApplicationStatus,
   getSingleApplication,
+  generateCoverLetter,
 };
