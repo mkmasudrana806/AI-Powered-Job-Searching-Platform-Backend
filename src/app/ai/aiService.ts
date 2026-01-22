@@ -2,7 +2,6 @@ import { GoogleGenAI } from "@google/genai";
 import config from "../config/env";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
-import { z } from "zod";
 import zodToJsonSchema from "zod-to-json-schema";
 
 // set api key

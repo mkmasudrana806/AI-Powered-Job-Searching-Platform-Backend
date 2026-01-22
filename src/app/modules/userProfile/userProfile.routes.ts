@@ -11,7 +11,7 @@ router.post(
   "/me/profile",
   auth("user"),
   validateRequest(UserProfileValidations.createProfileSchema),
-  UserProfileControllers.createUserProfile
+  UserProfileControllers.createUserProfile,
 );
 
 // update user profile
@@ -19,12 +19,19 @@ router.patch(
   "/me/profile",
   auth("user"),
   validateRequest(UserProfileValidations.updateProfileSchema),
-  UserProfileControllers.updateUserProfile
+  UserProfileControllers.updateUserProfile,
 );
 
 // get my profile (only profile owner)
 router.get("/me/profile", auth("user"), UserProfileControllers.getMyProfile);
 
 router.get("/profiles/:profileId", UserProfileControllers.getUserPublicProfile);
+
+// ============== ai related routes =============
+router.post(
+  "/me/profile/ai/resume-doctor",
+  auth("user"),
+  UserProfileControllers.getResumeDoctor,
+);
 
 export const UserProfileRoutes = router;

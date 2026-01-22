@@ -3,6 +3,7 @@ import asyncHandler from "../../utils/asyncHandler";
 import sendResponse from "../../utils/sendResponse";
 import { JobServices } from "../jobs/jobs.service";
 import { UserProfileServices } from "./userProfile.service";
+import resumeDoctorService from "../../ai/jobSeeker/resumeDoctor.service";
 
 /**
  * ----------------- create user profile ------------------
@@ -12,7 +13,7 @@ const createUserProfile = asyncHandler(async (req, res) => {
   const payload = req.body;
   const UserProfile = await UserProfileServices.createUserProfileIntoDB(
     userId,
-    payload
+    payload,
   );
 
   sendResponse(res, {
@@ -31,7 +32,7 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   const payload = req.body;
   const UserProfile = await UserProfileServices.updateUserProfileIntoDB(
     userId,
-    payload
+    payload,
   );
 
   sendResponse(res, {
@@ -62,9 +63,8 @@ const getMyProfile = asyncHandler(async (req, res) => {
  */
 const getUserPublicProfile = asyncHandler(async (req, res) => {
   const userId = req.params.profileId;
-  const UserProfile = await UserProfileServices.getUserPublicProfileFromDB(
-    userId
-  );
+  const UserProfile =
+    await UserProfileServices.getUserPublicProfileFromDB(userId);
 
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
@@ -74,9 +74,24 @@ const getUserPublicProfile = asyncHandler(async (req, res) => {
   });
 });
 
+// =============== ai services ===============
+const getResumeDoctor = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+  const { jobId } = req.body;
+
+  const result = await resumeDoctorService(userId, jobId);
+  sendResponse(res, {
+    statusCode: httpStatus.CREATED,
+    success: true,
+    message: "Resume doctor analyzed successfully",
+    data: result,
+  });
+});
+
 export const UserProfileControllers = {
   createUserProfile,
   updateUserProfile,
   getMyProfile,
   getUserPublicProfile,
+  getResumeDoctor,
 };

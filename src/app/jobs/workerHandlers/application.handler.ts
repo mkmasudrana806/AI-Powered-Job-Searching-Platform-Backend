@@ -9,7 +9,7 @@ import httpStatus from "http-status";
 import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import { TJob } from "../../modules/jobs/jobs.interface";
 import { Job } from "../../modules/jobs/jobs.model";
-import { applicationAiNotesSchema } from "../../ai/aiResponseSchema";
+import { AiResponseSchema } from "../../ai/aiResponseSchema";
 
 /**
  * ------------ fetch application details with job and profile ------------
@@ -71,7 +71,7 @@ export const applicationMatchaiNoteHandler = async (applicationId: string) => {
   const response = await aiServices.generateContent(
     userPrompt,
     systemPrompt,
-    applicationAiNotesSchema,
+    AiResponseSchema.applicationAiNotes,
   );
   const aiNotes = JSON.parse(response);
 
