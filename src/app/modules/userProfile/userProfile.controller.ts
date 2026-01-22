@@ -4,6 +4,7 @@ import sendResponse from "../../utils/sendResponse";
 import { JobServices } from "../jobs/jobs.service";
 import { UserProfileServices } from "./userProfile.service";
 import resumeDoctorService from "../../ai/jobSeeker/resumeDoctor.service";
+import skillGapAnalysisService from "../../ai/jobSeeker/skillGapAnalysis.service";
 
 /**
  * ----------------- create user profile ------------------
@@ -91,10 +92,26 @@ const getResumeDoctor = asyncHandler(async (req, res) => {
   });
 });
 
+/**
+ * ------------------- get skill gap analysis -------------------
+ */
+const getSkillGapAnalysis = asyncHandler(async (req, res) => {
+  const userId = req.user.userId;
+  const result = await skillGapAnalysisService(userId);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Skill gaps analyzed successfully",
+    data: result,
+  });
+});
+
 export const UserProfileControllers = {
   createUserProfile,
   updateUserProfile,
   getMyProfile,
   getUserPublicProfile,
   getResumeDoctor,
+  getSkillGapAnalysis,
 };

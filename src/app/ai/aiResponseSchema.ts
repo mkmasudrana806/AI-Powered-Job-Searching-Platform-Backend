@@ -27,12 +27,39 @@ const resumeDoctor = z.object({
     .max(3),
 });
 
+// -------------- cover letter schema --------------
 const coverLetter = z.object({
   cover_letter: z.string().describe("The generated cover letter content"),
+});
+
+// ------------ skill gap analysis schema -------------
+const skillMarketAnalysis = z.object({
+  chart_data: z.array(
+    z.object({
+      skill: z.string().describe("Normalized name from market data"),
+      demand_percentage: z.number().min(0).max(100),
+      user_has_it: z
+        .boolean()
+        .describe("Whether the user matches this market requirement"),
+      relevance_score: z
+        .number()
+        .min(0)
+        .max(10)
+        .describe("Priority for this specific role"),
+    }),
+  ),
+
+  market_insights: z.object({
+    role_evolution: z.string(),
+    top_compensation_drivers: z.array(z.string()),
+    competitive_density: z.enum(["Low", "Medium", "High"]),
+    emerging_trend: z.string(),
+  }),
 });
 
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
   coverLetter,
+  skillMarketAnalysis,
 };

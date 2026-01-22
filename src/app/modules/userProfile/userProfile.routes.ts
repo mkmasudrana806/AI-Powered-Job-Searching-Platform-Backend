@@ -34,4 +34,11 @@ router.post(
   UserProfileControllers.getResumeDoctor,
 );
 
+// --------- skill gap analysis ---------
+router.get(
+  "/me/profile/ai/skill-gap-analysis",
+  auth("user"),
+  UserProfileControllers.getSkillGapAnalysis,
+);
+
 export const UserProfileRoutes = router;
