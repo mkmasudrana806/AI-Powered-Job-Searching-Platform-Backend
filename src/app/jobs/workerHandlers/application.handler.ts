@@ -9,6 +9,7 @@ import httpStatus from "http-status";
 import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import { TJob } from "../../modules/jobs/jobs.interface";
 import { Job } from "../../modules/jobs/jobs.model";
+import { applicationAiNotesSchema } from "../../ai/aiResponseSchema";
 
 /**
  * ------------ fetch application details with job and profile ------------
@@ -67,7 +68,12 @@ export const applicationMatchaiNoteHandler = async (applicationId: string) => {
   });
 
   // ai notes
-  const aiNotes = await aiServices.generateContent(userPrompt, systemPrompt);
+  const response = await aiServices.generateContent(
+    userPrompt,
+    systemPrompt,
+    applicationAiNotesSchema,
+  );
+  const aiNotes = JSON.parse(response);
 
   // application rank score
   const rankingScore = new CandidateRanking().calculate(

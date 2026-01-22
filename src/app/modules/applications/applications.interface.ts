@@ -42,7 +42,7 @@ export type TApplication = {
   // AI
   matchScore?: number;
   rankingScore?: number;
-  aiNotes?: string;
+  aiNotes?: string[];
 
   withdrawnAt?: Date;
   appliedAt: Date;

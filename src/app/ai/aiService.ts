@@ -2,6 +2,8 @@ import { GoogleGenAI } from "@google/genai";
 import config from "../config/env";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
+import { z } from "zod";
+import zodToJsonSchema from "zod-to-json-schema";
 
 // set api key
 const GEMINI_API_KEY = config.google_api_key;
@@ -46,14 +48,16 @@ const generateEmbedding = async (text: string) => {
  * @param systemPrompt system prompt (optional)
  * @returns
  */
-const generateContent = async (userPrompt: string, systemPrompt?: string) => {
+const generateContent = async (
+  systemPrompt: string,
+  userPrompt: string,
+  responseSchema: any,
+): Promise<string> => {
   // system instruction
-  const systemIns = systemPrompt
-    ? {
-        role: "system",
-        parts: [{ text: systemPrompt }],
-      }
-    : undefined;
+  const systemIns = {
+    role: "system",
+    parts: [{ text: systemPrompt }],
+  };
 
   // push user prompt alwasy
   const userIns = {
@@ -65,6 +69,8 @@ const generateContent = async (userPrompt: string, systemPrompt?: string) => {
     model: config.content_generate_model_name as string,
     config: {
       systemInstruction: systemIns,
+      responseMimeType: "application/json",
+      responseSchema: zodToJsonSchema(responseSchema),
     },
     contents: [userIns], // content inside array
   });
@@ -73,7 +79,8 @@ const generateContent = async (userPrompt: string, systemPrompt?: string) => {
   const contentPart = result?.candidates?.[0]?.content?.parts?.[0];
 
   // return the text part and optionally handle if contentPart is undefined
-  return contentPart && "text" in contentPart ? contentPart.text : "";
+  const responseText = contentPart?.text ?? "";
+  return responseText;
 };
 
 const aiServices = {

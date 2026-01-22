@@ -33,7 +33,7 @@ const applicationStatusHistorySchema = new Schema<TApplicationStatusHistory>(
       required: true,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 const applicationSchema = new Schema<TApplication>(
@@ -115,7 +115,7 @@ const applicationSchema = new Schema<TApplication>(
     },
 
     aiNotes: {
-      type: String,
+      type: [String],
     },
 
     appliedAt: {
@@ -126,7 +126,7 @@ const applicationSchema = new Schema<TApplication>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 applicationSchema.index({ job: 1, applicant: 1 }, { unique: true });
@@ -145,5 +145,5 @@ applicationSchema.pre("save", function (next) {
 
 export const Application = model<TApplication>(
   "Application",
-  applicationSchema
+  applicationSchema,
 );
