@@ -5,6 +5,11 @@
  * @returns percentage
  */
 const cosineSimilarity = (a: number[], b: number[]): number => {
+  // handle empty vectors and unequal length cases
+  if (!a || !b || a.length === 0 || b.length === 0 || a.length !== b.length) {
+    return 0;
+  }
+
   let dot = 0;
   let normA = 0;
   let normB = 0;
