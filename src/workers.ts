@@ -3,8 +3,13 @@ import embeddingWorker from "./app/jobs/workers/embedding.worker";
 import applicationMatchRankWorker from "./app/jobs/workers/application.worker";
 import mongoose from "mongoose";
 import config from "./app/config/env";
+import salaryPredictionWorker from "./app/jobs/workers/salaryPrediction.worker";
 
-const allWorkers: Worker[] = [embeddingWorker, applicationMatchRankWorker];
+const allWorkers: Worker[] = [
+  embeddingWorker,
+  applicationMatchRankWorker,
+  salaryPredictionWorker,
+];
 
 // for this workers process, we connect db
 main().catch((err) => console.log(err));

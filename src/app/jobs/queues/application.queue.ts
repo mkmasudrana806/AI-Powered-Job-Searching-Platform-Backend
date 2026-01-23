@@ -8,4 +8,9 @@ const applicationQueue = new Queue("application-queue", {
   connection: redisConnection,
 });
 
+// error
+applicationQueue.on("error", (err) => {
+  if (err) console.log("Application queue throws error!");
+});
+
 export default applicationQueue;

@@ -3,6 +3,7 @@ import auth from "../../middlewares/auth";
 import validateRequest from "../../middlewares/validateRequest";
 import { UserProfileValidations } from "./userProfile.validation";
 import { UserProfileControllers } from "./userProfile.controller";
+import { SalaryPredictionController } from "../salaryPrediction/salaryPrediction.controller";
 
 const router = express.Router();
 
@@ -41,4 +42,10 @@ router.get(
   UserProfileControllers.getSkillGapAnalysis,
 );
 
+// ----------- salary prediction ---------
+router.get(
+  "/me/profie/salary-prediction",
+  auth("user"),
+  SalaryPredictionController.salaryPrediction,
+);
 export const UserProfileRoutes = router;
