@@ -12,7 +12,7 @@ const salaryPrediction = asyncHandler(async (req, res) => {
   sendResponse(res, {
     statusCode: httpStatus.CREATED,
     success: true,
-    message: `Salary prediction is: ${result}`,
+    message: `Salary prediction is: ${result?.status}`,
     data: result,
   });
 });

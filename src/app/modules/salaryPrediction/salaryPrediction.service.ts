@@ -32,12 +32,11 @@ const salaryPrediction = async (userId: string) => {
     predicted.startedAt = new Date();
   }
 
-  console.log("before db save...");
   await predicted.save();
 
-  console.log("after db save...");
   // now submit background job for prediction
   // whenever it get completed, set status completed and prediction data
+  // when user change profile data and embedding changed, then set status to 'idle'
   salaryPredictionQueue.add(
     "salary-prediction",
     { userId },
@@ -52,7 +51,7 @@ const salaryPrediction = async (userId: string) => {
     },
   );
 
-  return "Yes now it should work...";
+  return predicted;
 };
 
 export const SalaryPredictionService = {

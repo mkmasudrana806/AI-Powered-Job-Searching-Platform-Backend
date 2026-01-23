@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 import { Application } from "../../modules/applications/applications.model";
-import { CandidateRanking } from "./worker.handler.utils";
+import { CandidateRanking } from "./utils";
 import aiServices from "../../ai/aiService";
 import getAINotesPrompt from "../../ai/prompts/aiNotes.prompt";
 import cosineSimilarity from "../../utils/consineSimilarityMatching";
