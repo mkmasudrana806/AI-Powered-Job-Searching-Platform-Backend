@@ -16,7 +16,7 @@ import SalaryPrediction from "../../modules/salaryPrediction/salaryPrediction.mo
  *
  * @param userId user id for predicting salayr
  */
-const predictSalary = async (userId: string) => {
+export const predictSalary = async (userId: string) => {
   // fetch user profile
   const profile = await UserProfile.findOne({ user: userId }).select(
     "+embedding",
@@ -95,4 +95,16 @@ const predictSalary = async (userId: string) => {
   return "Yes salary prediction full pipeline is worked!";
 };
 
-export default predictSalary;
+/**
+ * --------- invalidate salry prediction status ----------------
+ * as semantic field changes, that's why we set status to idle
+ * so that user get updated result when they run salary prediction
+ *
+ * @param userId user id to invalidate prediction as idle as profile was changed
+ */
+export const invalidateSalaryPredictionStatus = async (userId: string) => {
+  await SalaryPrediction.findOneAndUpdate(
+    { user: userId, status: "completed" },
+    { status: "idle", completedAt: null, startedAt: null },
+  );
+};

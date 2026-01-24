@@ -1,6 +1,9 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
-import predictSalary from "../workerHandlers/salaryPrediction.handler";
+import {
+  predictSalary,
+  invalidateSalaryPredictionStatus,
+} from "../workerHandlers/salaryPrediction.handler";
 
 const salaryPredictionWorker = new Worker(
   "salary-prediction-queue",
@@ -8,6 +11,8 @@ const salaryPredictionWorker = new Worker(
     switch (job.name) {
       case "salary-prediction":
         await predictSalary(job.data.userId);
+      case "salary-prediction-invalidate":
+        await invalidateSalaryPredictionStatus(job.data.userId);
     }
   },
   {

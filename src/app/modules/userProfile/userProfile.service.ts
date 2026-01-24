@@ -10,6 +10,7 @@ import {
   generateHash,
 } from "./userProfile.utils";
 import { embeddingQueue } from "../../jobs/queues/embedding.queue";
+import salaryPredictionQueue from "../../jobs/queues/salaryPrediction.queue";
 
 /**
  * ------------------- Create Profile -------------------
@@ -154,6 +155,17 @@ const updateUserProfileIntoDB = async (
           type: "exponential",
           delay: 3000,
         },
+        removeOnComplete: true,
+        removeOnFail: false,
+      },
+    );
+
+    // submit a job to invalidate salary prediction status as profile updated
+    salaryPredictionQueue.add(
+      "salary-prediction-invalidate",
+      { userId },
+      {
+        attempts: 3,
         removeOnComplete: true,
         removeOnFail: false,
       },
