@@ -1,12 +1,13 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
+import predictSalary from "../workerHandlers/salaryPrediction.handler";
 
 const salaryPredictionWorker = new Worker(
   "salary-prediction-queue",
   async (job) => {
     switch (job.name) {
       case "salary-prediction":
-        console.log("Yes salary prediction worker listening... ");
+        await predictSalary(job.data.userId);
     }
   },
   {
