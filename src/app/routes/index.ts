@@ -5,6 +5,7 @@ import { JobRoutes } from "../modules/jobs/jobs.routes";
 import { CompanyRoutes } from "../modules/companies/companies.routes";
 import { ApplicationRoutes } from "../modules/applications/applications.routes";
 import { UserProfileRoutes } from "../modules/userProfile/userProfile.routes";
+import { InterviewPrepRoutes } from "../modules/interviewPreparation/interviewPreparation.routes";
 const router = express.Router();
 
 // user
@@ -24,5 +25,8 @@ router.use("/", ApplicationRoutes);
 
 // user profile
 router.use("/", UserProfileRoutes);
+
+// interview preparation
+router.use("/interview-prep", InterviewPrepRoutes);
 
 export const ApiRoutes = router;

@@ -57,9 +57,65 @@ const skillMarketAnalysis = z.object({
   }),
 });
 
+/**
+ * Interview preparation job-specific response schema
+ */
+
+const questionValidation = z.object({
+  question_id: z.string(),
+  question: z.string(),
+  category: z.enum([
+    "Role-Specific",
+    "Behavioral",
+    "Situational",
+    "Cultural-Fit",
+  ]),
+  interviewer_intent: z
+    .string()
+    .describe("The hidden reason why an interviewer asks this."),
+  personal_anchor_hint: z
+    .string()
+    .describe("A specific reference to the user's past work or skills."),
+  ideal_talking_points: z
+    .array(z.string())
+    .describe("3-4 bullet points to cover in a great answer."),
+});
+
+// interview dashboard response for 1st time user click on interview preparation
+const interviewPrepDashboard = z.object({
+  // 1st: coach summary the role and how to win
+  coaching_summary: z
+    .string()
+    .describe("High-level advice on how to win this specific interview."),
+  professional_vibe: z
+    .string()
+    .describe(
+      "The tone the candidate should set (e.g., Empathetic, Authoritative).",
+    ),
+
+  // 2nd: question bank should generate by 1st click
+  question_bank: z.array(questionValidation).length(10),
+
+  // 3rd: gaps discussion
+  gap_strategies: z.array(
+    z.object({
+      missing_qualification: z.string(),
+      pivot_strategy: z
+        .string()
+        .describe("A confident script to bridge this specific gap."),
+    }),
+  ),
+
+  // 4th: candidate may ask question to the interviewr
+  smart_reverse_questions: z
+    .array(z.string())
+    .describe("2-3 smart questions the candidate should ask."),
+});
+
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
   coverLetter,
   skillMarketAnalysis,
+  interviewPrepDashboard,
 };
