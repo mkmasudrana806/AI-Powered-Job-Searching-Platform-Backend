@@ -37,6 +37,7 @@ export type TInterviewPrep = {
   userId: Types.ObjectId;
   jobId: Types.ObjectId;
 
+  matchScore: number;
   // high leve coach vibe and summary
   coaching_summary: string;
   professional_vibe: string;

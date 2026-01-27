@@ -33,6 +33,9 @@ const InterviewPrepSchema = new Schema<TInterviewPrep>(
     userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
     jobId: { type: Schema.Types.ObjectId, ref: "Job", required: true },
 
+    // match score between them
+    matchScore: { type: Number, min: 0, max: 100, required: true },
+
     // coaching summary
     coaching_summary: { type: String, required: true },
     professional_vibe: { type: String },

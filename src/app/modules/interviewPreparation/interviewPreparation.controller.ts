@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import asyncHandler from "../../utils/asyncHandler";
 import sendResponse from "../../utils/sendResponse";
-import { InterviewPrepServices } from "./interviewPreparation.service";
+import interviewPrepDashboardService from "../../ai/jobSeeker/interviewPrep.service";
 
 /*
  * ---------------------- interview Preparation Dashboard -----------------------
@@ -10,10 +10,7 @@ const interviewPrepDashboard = asyncHandler(async (req, res) => {
   const userId = req.user.userId;
   const jobId = req.params.jobId;
 
-  const result = await InterviewPrepServices.interviewPrepDashboard(
-    userId,
-    jobId,
-  );
+  const result = await interviewPrepDashboardService(userId, jobId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
