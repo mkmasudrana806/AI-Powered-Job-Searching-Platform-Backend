@@ -41,23 +41,24 @@ const interviewQuestionPracticeService = async (
       AiResponseSchema.interviewQuestionEvaluation,
     ),
   );
-  const newAttempt = {
-    user_answer: userAnswer.user_answer,
-    ai_feedback: evaluation.ai_feedback,
-    readiness_score: evaluation.readiness_score,
-    suggested_refinement: evaluation.suggested_refinement,
-    attempted_at: Date,
-  };
 
   // update user attempts for that question
-  const updatedPrep = await InterviewPrep.findOneAndUpdate(
-    { _id: prepId, user: userId, "question_bank._id": questionId },
+  await InterviewPrep.updateOne(
+    {
+      _id: prepId,
+      "question_bank._id": questionId,
+    },
     {
       $push: {
-        "question_bank.$.user_attempts": newAttempt,
+        "question_bank.$.user_attempts": {
+          user_answer: userAnswer.user_answer,
+          ai_feedback: evaluation.ai_feedback,
+          readiness_score: evaluation.readiness_score,
+          suggested_refinement: evaluation.suggested_refinement,
+          attempted_at: new Date(),
+        },
       },
     },
-    { new: true },
   );
 
   return evaluation;
