@@ -81,7 +81,9 @@ const questionValidation = z.object({
     .describe("3-4 bullet points to cover in a great answer."),
 });
 
-// interview dashboard response for 1st time user click on interview preparation
+/*
+ * interview dashboard response for 1st time user click on interview preparation
+ */
 const interviewPrepDashboard = z.object({
   // 1st: coach summary the role and how to win
   coaching_summary: z
@@ -112,10 +114,35 @@ const interviewPrepDashboard = z.object({
     .describe("2-3 smart questions the candidate should ask."),
 });
 
+/**
+ * ---------- evaluate interview question in practice mode -------------
+ */
+const interviewQuestionEvaluation = z.object({
+  readiness_score: z
+    .number()
+    .min(0)
+    .max(100)
+    .describe(
+      "0-100 score based on clarity, STAR method usage, and keyword relevance.",
+    ),
+  ai_feedback: z
+    .string()
+    .describe(
+      "Constructive criticism highlighting what was good and what was missing.",
+    ),
+  suggested_refinement: z
+    .string()
+    .describe("A professional, 'ready-to-use' version of the user's answer."),
+  missed_keywords: z
+    .array(z.string())
+    .describe("Important industry terms or skills the user forgot to mention."),
+});
+
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
   coverLetter,
   skillMarketAnalysis,
   interviewPrepDashboard,
+  interviewQuestionEvaluation,
 };

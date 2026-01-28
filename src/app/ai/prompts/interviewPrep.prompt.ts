@@ -6,7 +6,7 @@ import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
  * @param profile
  * @param job
  */
-const gentInterviewPrepPrompt = (profile: TUserProfile, job: TJob) => {
+const getInterviewPrepPrompt = (profile: TUserProfile, job: TJob) => {
   // create profile and job context
   const jobContext = `
           Title: ${job.title}
@@ -41,4 +41,4 @@ const gentInterviewPrepPrompt = (profile: TUserProfile, job: TJob) => {
   return { systemPrompt, userPrompt };
 };
 
-export default gentInterviewPrepPrompt;
+export default getInterviewPrepPrompt;

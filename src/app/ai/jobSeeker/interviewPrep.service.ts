@@ -4,7 +4,7 @@ import { UserProfile } from "../../modules/userProfile/userProfile.model";
 import cosineSimilarity from "../../utils/consineSimilarityMatching";
 import { AiResponseSchema } from "../aiResponseSchema";
 import aiServices from "../aiService";
-import gentInterviewPrepPrompt from "../prompts/interviewPrep.prompt";
+import getInterviewPrepPrompt from "../prompts/interviewPrep.prompt";
 
 /**
  * ----------- interview preparation dashboard ----------------
@@ -30,7 +30,7 @@ const interviewPrepDashboardService = async (userId: string, jobId: string) => {
   }
 
   // get prompt
-  const { systemPrompt, userPrompt } = gentInterviewPrepPrompt(profile, job);
+  const { systemPrompt, userPrompt } = getInterviewPrepPrompt(profile, job);
 
   // calculate matching score
   const matchScore = cosineSimilarity(
@@ -47,8 +47,8 @@ const interviewPrepDashboardService = async (userId: string, jobId: string) => {
 
   // save and return the newly dashboard to the user
   const newPrep = await InterviewPrep.create({
-    userId,
-    jobId,
+    user: userId,
+    job: jobId,
     matchScore,
     ...JSON.parse(aiResponse),
   });

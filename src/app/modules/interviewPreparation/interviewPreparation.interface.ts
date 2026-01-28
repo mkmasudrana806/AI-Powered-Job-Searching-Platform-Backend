@@ -18,6 +18,7 @@ export type TUserAttempt = {
 
 // 10 interview question
 export type TInterviewQuestion = {
+  _id: string;
   question: string;
   category: TQuestionCategory;
   interviewer_intent: string;
@@ -34,8 +35,8 @@ export type TRequirementGap = {
 
 // main interview preparation dashboard data
 export type TInterviewPrep = {
-  userId: Types.ObjectId;
-  jobId: Types.ObjectId;
+  user: Types.ObjectId;
+  job: Types.ObjectId;
 
   matchScore: number;
   // high leve coach vibe and summary

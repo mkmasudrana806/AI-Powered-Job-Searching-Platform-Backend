@@ -30,8 +30,8 @@ const questionSchema = new Schema<TInterviewQuestion>({
 // interview preparation schema
 const InterviewPrepSchema = new Schema<TInterviewPrep>(
   {
-    userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-    jobId: { type: Schema.Types.ObjectId, ref: "Job", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    job: { type: Schema.Types.ObjectId, ref: "Job", required: true },
 
     // match score between them
     matchScore: { type: Number, min: 0, max: 100, required: true },
