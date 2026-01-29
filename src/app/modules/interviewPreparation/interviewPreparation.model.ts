@@ -34,10 +34,10 @@ const InterviewPrepSchema = new Schema<TInterviewPrep>(
     job: { type: Schema.Types.ObjectId, ref: "Job", required: true },
 
     // match score between them
-    matchScore: { type: Number, min: 0, max: 100, required: true },
+    matchScore: { type: Number, min: 0, max: 100 },
 
     // coaching summary
-    coaching_summary: { type: String, required: true },
+    coaching_summary: { type: String },
     professional_vibe: { type: String },
 
     // question back (10 questions)
@@ -53,6 +53,13 @@ const InterviewPrepSchema = new Schema<TInterviewPrep>(
 
     // question should ask to interviewer if any chances
     smart_reverse_questions: [{ type: String }],
+
+    status: {
+      type: String,
+      enum: ["generating", "generated", "failed"],
+      default: "generating",
+      required: true,
+    },
   },
   {
     timestamps: true,

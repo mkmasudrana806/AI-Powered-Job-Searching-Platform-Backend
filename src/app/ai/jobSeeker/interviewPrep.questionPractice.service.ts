@@ -17,7 +17,7 @@ const interviewQuestionPracticeService = async (
     throw new AppError(httpStatus.NOT_FOUND, "Preparation session not found.");
 
   // find the question ID
-  const questionData = prep.question_bank.find(
+  const questionData = prep.question_bank?.find(
     (q) => q._id.toString() === questionId,
   );
 

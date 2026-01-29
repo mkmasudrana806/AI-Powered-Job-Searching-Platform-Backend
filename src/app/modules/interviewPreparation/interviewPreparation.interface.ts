@@ -38,17 +38,19 @@ export type TInterviewPrep = {
   user: Types.ObjectId;
   job: Types.ObjectId;
 
-  matchScore: number;
+  matchScore?: number;
   // high leve coach vibe and summary
-  coaching_summary: string;
-  professional_vibe: string;
+  coaching_summary?: string;
+  professional_vibe?: string;
 
   // core 10 questions
-  question_bank: TInterviewQuestion[];
+  question_bank?: TInterviewQuestion[];
 
   // job-resume weaknes
-  gap_strategies: TRequirementGap[];
+  gap_strategies?: TRequirementGap[];
 
   // ask question to the user
-  smart_reverse_questions: string[];
+  smart_reverse_questions?: string[];
+
+  status: "generating" | "generated" | "failed";
 };

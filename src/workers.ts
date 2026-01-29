@@ -4,11 +4,13 @@ import applicationMatchRankWorker from "./app/jobs/workers/application.worker";
 import mongoose from "mongoose";
 import config from "./app/config/env";
 import salaryPredictionWorker from "./app/jobs/workers/salaryPrediction.worker";
+import interviewPrepWorker from "./app/jobs/workers/interviewPrep.worker";
 
 const allWorkers: Worker[] = [
   embeddingWorker,
   applicationMatchRankWorker,
   salaryPredictionWorker,
+  interviewPrepWorker,
 ];
 
 // for this workers process, we connect db

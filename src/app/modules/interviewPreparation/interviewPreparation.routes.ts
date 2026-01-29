@@ -7,7 +7,7 @@ const router = express.Router();
 
 // --------------- interview preparation dashboard generate --------------
 router.get(
-  "/jobs/:jobId/create-dashboard",
+  "/jobs/:jobId/start-prep",
   auth("user"),
   InterviewPrepController.interviewPrepDashboard,
 );
