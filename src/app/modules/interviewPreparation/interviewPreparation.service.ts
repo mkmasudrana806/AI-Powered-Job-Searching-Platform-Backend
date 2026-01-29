@@ -20,7 +20,6 @@ const interviewPrepStart = async (userId: string, jobId: string) => {
   // create a new data to db with status='generating'
   // submit a job to the backgorund worker
   if (!existingPrep) {
-    console.log("existing nai");
     // create a new interview preparation data
     const result = await InterviewPrep.create({
       status: "generating",
@@ -48,7 +47,6 @@ const interviewPrepStart = async (userId: string, jobId: string) => {
   // cover old user + poll request
   // for 'generating' by default others value will be null
 
-  console.log("existing achei");
   return existingPrep;
 };
 
