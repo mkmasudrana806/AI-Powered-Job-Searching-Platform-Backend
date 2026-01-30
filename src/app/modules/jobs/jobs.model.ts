@@ -12,6 +12,44 @@ const rankingConfigSchema = new Schema<TRankingConfig>({
   fieldOfStudy: { type: Number, default: 0 },
 });
 
+const ScoreRubricSchema = new Schema(
+  {
+    score_1: { type: String, required: true },
+    score_3: { type: String, required: true },
+    score_5: { type: String, required: true },
+  },
+  { _id: false },
+);
+
+const StandardQuestionSchema = new Schema({
+  question: { type: String, required: true },
+  category: {
+    type: String,
+    enum: [
+      "Core_Competency",
+      "Situational_Judgment",
+      "Behavioral_Traits",
+      "Operational_Knowledge",
+      "Leadership_Potential",
+      "Culture_Values",
+    ],
+    required: true,
+  },
+  intent: { type: String, required: true },
+  good_answer_signals: [{ type: String }],
+  red_flags: [{ type: String }],
+  score_rubric: { type: ScoreRubricSchema, required: true },
+});
+
+const StandardInterviewKitSchema = new Schema(
+  {
+    strategy: { type: String, required: true },
+    questions: [StandardQuestionSchema],
+  },
+  { _id: false },
+);
+
+// ------------ job schema ---------
 const JobSchema = new Schema<TJob>(
   {
     company: {
@@ -94,6 +132,17 @@ const JobSchema = new Schema<TJob>(
 
     embeddingModel: {
       type: String,
+    },
+
+    interviewKitStatus: {
+      type: String,
+      enum: ["pending", "generating", "generated", "failed"],
+      default: "pending",
+    },
+
+    interviewKit: {
+      type: StandardInterviewKitSchema,
+      default: null,
     },
 
     rankingConfig: {

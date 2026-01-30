@@ -49,6 +49,37 @@ export type TRankingConfig = {
   recency: number;
 };
 
+type TInterviewQuestionCategory =
+  | "Core_Competency"
+  | "Situational_Judgment"
+  | "Behavioral_Traits"
+  | "Operational_Knowledge"
+  | "Leadership_Potential"
+  | "Culture_Values";
+
+// scoring rubrics
+type TScoreRubric = {
+  score_1: string;
+  score_3: string;
+  score_5: string;
+};
+
+// each question type
+type TStandardQuestion = {
+  question: string;
+  category: TInterviewQuestionCategory;
+  intent: string;
+  good_answer_signals: string[];
+  red_flags: string[];
+  score_rubric: TScoreRubric;
+};
+
+// strategy and question set
+type TStandardInterviewKit = {
+  strategy: string;
+  questions: TStandardQuestion[];
+};
+
 export type TJob = {
   company: Types.ObjectId;
   createdBy: Types.ObjectId;
@@ -63,6 +94,8 @@ export type TJob = {
   location: TLocation;
   embedding?: number[];
   embeddingModel?: string;
+  interviewKit?: TStandardInterviewKit;
+  interviewKitStatus: "pending" | "generating" | "generated" | "failed";
   status: TJOB_STATUS;
   rankingConfig: TRankingConfig;
   isDeleted: boolean;
