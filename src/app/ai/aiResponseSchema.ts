@@ -186,6 +186,49 @@ const aiJobPostAssistant = z.object({
   }),
 });
 
+/**
+ * ----------- standard interview question schema --------------
+ */
+const standardInterviewQuestion = z.object({
+  strategy: z
+    .string()
+    .describe(
+      "Overall interview strategy for this specific role based on industry standards.",
+    ),
+  questions: z.array(
+    z.object({
+      id: z.string(),
+      question: z.string(),
+      category: z.enum([
+        "Core_Competency",
+        "Situational_Judgment",
+        "Behavioral_Traits",
+        "Operational_Knowledge",
+        "Leadership_Potential",
+        "Culture_Values",
+      ]),
+      intent: z
+        .string()
+        .describe("What specific skill or trait is being tested?"),
+      good_answer_signals: z
+        .array(z.string())
+        .describe("Positive indicators in the candidate's response."),
+      red_flags: z.array(z.string()).describe("Warning signs in the response."),
+      score_rubric: z.object({
+        score_1: z
+          .string()
+          .describe("Lacks basic understanding or shows negative traits"),
+        score_3: z
+          .string()
+          .describe("Meets basic requirements but lacks depth"),
+        score_5: z
+          .string()
+          .describe("Demonstrates mastery and proactive thinking"),
+      }),
+    }),
+  ),
+});
+
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
@@ -194,4 +237,5 @@ export const AiResponseSchema = {
   interviewPrepDashboard,
   interviewQuestionEvaluation,
   aiJobPostAssistant,
+  standardInterviewQuestion,
 };
