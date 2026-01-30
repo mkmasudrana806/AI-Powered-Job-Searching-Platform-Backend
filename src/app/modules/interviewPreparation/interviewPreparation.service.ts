@@ -1,4 +1,5 @@
 import interviewPrepQueue from "../../jobs/queues/interviewPrep.queue";
+import { TInterviewPrep } from "./interviewPreparation.interface";
 import { InterviewPrep } from "./interviewPreparation.model";
 
 /**
@@ -19,13 +20,31 @@ const interviewPrepStart = async (userId: string, jobId: string) => {
   // if existingPrep not exist means
   // create a new data to db with status='generating'
   // submit a job to the backgorund worker
-  if (!existingPrep) {
-    // create a new interview preparation data
-    const result = await InterviewPrep.create({
-      status: "generating",
-      user: userId,
-      job: jobId,
-    });
+  if (!existingPrep || existingPrep.status === "failed") {
+    let result: TInterviewPrep | null = null;
+    // create a new interview preparation data, if new prep
+    if (!existingPrep) {
+      result = await InterviewPrep.create({
+        status: "generating",
+        user: userId,
+        job: jobId,
+      });
+    }
+    // on 'failed', change status to 'generating'
+    else if (existingPrep.status === "failed") {
+      result = await InterviewPrep.findOneAndUpdate(
+        {
+          status: "failed",
+          user: userId,
+          job: jobId,
+        },
+        {
+          status: "generating",
+          user: userId,
+          job: jobId,
+        },
+      );
+    }
 
     // submit a background job for creating prepration dashboard
     interviewPrepQueue.add(
