@@ -8,6 +8,7 @@ import { TCompanyMiddlewareData } from "../companies/companies.interface";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { embeddingQueue } from "../../jobs/queues/embedding.queue";
 import applicationQueue from "../../jobs/queues/application.queue";
+import employerQueue from "../../jobs/queues/employer.queue";
 
 /**
  * ------------------ create job as draft or open ------------------
@@ -60,6 +61,21 @@ const createJobIntoDB = async (
       backoff: {
         type: "exponential",
         delay: 3000,
+      },
+      removeOnComplete: true,
+      removeOnFail: false,
+    },
+  );
+
+  // submit another job for interview standard question generation
+  employerQueue.add(
+    "standard-interview-kit",
+    { jobId: result._id },
+    {
+      attempts: 3,
+      backoff: {
+        type: "exponential",
+        delay: 5000,
       },
       removeOnComplete: true,
       removeOnFail: false,

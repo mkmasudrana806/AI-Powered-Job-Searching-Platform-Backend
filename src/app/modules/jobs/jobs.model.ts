@@ -136,8 +136,8 @@ const JobSchema = new Schema<TJob>(
 
     interviewKitStatus: {
       type: String,
-      enum: ["pending", "generating", "generated", "failed"],
-      default: "pending",
+      enum: ["generating", "generated", "failed"],
+      default: "generating",
     },
 
     interviewKit: {
@@ -147,6 +147,7 @@ const JobSchema = new Schema<TJob>(
 
     rankingConfig: {
       type: rankingConfigSchema,
+      default: () => ({}),
       required: true,
     },
 

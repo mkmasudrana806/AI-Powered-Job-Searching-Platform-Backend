@@ -62,7 +62,6 @@ const createJobSchema = z.object({
   experienceLevel: z.enum(["junior", "mid", "senior", "lead"]),
   employmentType: z.enum(["full-time", "part-time", "contract", "internship"]),
   qualifications: qualificationSchema,
-  rankingConfig: rankingConfigSchema,
   salary: salarySchema,
   location: locationSchema,
   expiresAt: z.date().optional(),
