@@ -93,4 +93,14 @@ router.get(
 
 // ------------------- public routes -------------------
 
+// ------------- ai related routes ----------------
+// generate job post draft by ai
+router.post(
+  "/companies/:companyId/generate-job-draft",
+  auth("user"),
+  requireCompanyAccess("owner", "recruiter"),
+  validateRequest(JobValidations.jobPostGenerationAssistant),
+  JobControllers.jobPostDraftAssistant,
+);
+
 export const JobRoutes = router;

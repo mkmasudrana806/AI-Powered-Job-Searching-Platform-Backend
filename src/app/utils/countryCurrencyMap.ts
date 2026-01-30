@@ -164,4 +164,5 @@ export const countryCurrencyMap: Record<string, string> = {
 
   // fallback if country is not in user profile
   Unknown: "USD",
+  International: "USD",
 };

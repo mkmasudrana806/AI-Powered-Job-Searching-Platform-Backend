@@ -106,10 +106,18 @@ const updateJobRankConfigSchema = z.object({
   }),
 });
 
+// ---------- job's role instruction for job post draft ------------
+const jobPostGenerationAssistant = z.object({
+  body: z.object({
+    userInput: z.string().min(30, "Job's role input should more biggers"),
+  }),
+});
+
 export const JobValidations = {
   createJobValidationSchema,
   updateJobValidationSchema,
   updateJobRankConfigSchema,
   changeJobStatusValidationSchema,
   draftJobValidationSchema,
+  jobPostGenerationAssistant,
 };

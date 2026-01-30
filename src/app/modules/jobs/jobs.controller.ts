@@ -5,6 +5,7 @@ import { JobServices } from "./jobs.service";
 import { TCompanyMiddlewareData } from "../companies/companies.interface";
 import AppError from "../../utils/AppError";
 import { TJOB_STATUS } from "./jobs.interface";
+import generateJobDraftService from "../../ai/employer/jobDraftGenerate.service";
 
 /**
  * ------------------- create job -------------------
@@ -156,6 +157,24 @@ const getCompanyJobs = asyncHandler(async (req, res) => {
   });
 });
 
+// ================= ai related controller ================
+/**
+ * ------------------- job post draft assistant -------------------
+ */
+const jobPostDraftAssistant = asyncHandler(async (req, res) => {
+  const { companyId } = req.company;
+  const userInput = req.body.userInput;
+
+  const jobs = await generateJobDraftService(companyId, userInput);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: "Job draft created successfully",
+    data: jobs,
+  });
+});
+
 export const JobControllers = {
   createJob,
   publishDraftJob,
@@ -164,4 +183,5 @@ export const JobControllers = {
   updateJobRankingConfig,
   deleteJob,
   getCompanyJobs,
+  jobPostDraftAssistant,
 };

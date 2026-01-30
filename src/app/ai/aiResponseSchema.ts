@@ -138,6 +138,54 @@ const interviewQuestionEvaluation = z.object({
     .describe("Important industry terms or skills the user forgot to mention."),
 });
 
+/**
+ * ---------- ai job post assistant --------------
+ */
+const aiJobPostAssistant = z.object({
+  title: z.string().describe("The professional job title."),
+  description: z
+    .string()
+    .describe(
+      "A compelling 1-2 paragraph overview of the role and company impact.",
+    ),
+  responsibilities: z.array(z.string()).describe("A list of 3-5 key duties."),
+  requiredSkills: z
+    .array(z.string())
+    .describe("Technical and soft skills required."),
+
+  experienceLevel: z.enum(["junior", "mid", "senior", "lead"]),
+  employmentType: z.enum(["full-time", "part-time", "contract", "internship"]),
+  qualifications: z.object({
+    educationLevel: z.enum([
+      "ssc",
+      "hsc",
+      "diploma",
+      "bachelor",
+      "master",
+      "phd",
+      "not_required",
+    ]),
+    fieldsOfStudy: z.array(z.string()).optional(),
+    text: z.string().describe("Summary of educational requirements."),
+  }),
+  salary: z.object({
+    type: z.enum(["fixed", "range", "negotiable", "not_disclosed"]),
+    min: z.number().nullable(),
+    max: z.number().nullable(),
+    currency: z.string().default("USD"),
+    rawText: z
+      .string()
+      .describe("Human readable salary (e.g. $50k - $70k)")
+      .default("Negotiable"),
+  }),
+  location: z.object({
+    city: z.string().optional(),
+    country: z.string().optional(),
+    remote: z.boolean().default(false),
+    officeAddress: z.string().nullable(),
+  }),
+});
+
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
@@ -145,4 +193,5 @@ export const AiResponseSchema = {
   skillMarketAnalysis,
   interviewPrepDashboard,
   interviewQuestionEvaluation,
+  aiJobPostAssistant,
 };
