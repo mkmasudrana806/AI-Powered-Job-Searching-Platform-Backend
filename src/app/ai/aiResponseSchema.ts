@@ -229,6 +229,35 @@ const standardInterviewQuestion = z.object({
   ),
 });
 
+/**
+ * ------- individual interview question set for shortlisted candidate --------
+ */
+const individualInterviewQuestion = z.object({
+  candidateSummary: z
+    .string()
+    .describe(
+      "A brief overview of why this candidate was flagged for these specific questions.",
+    ),
+  questions: z.array(
+    z.object({
+      question: z.string(),
+      gapIdentified: z
+        .string()
+        .describe(
+          "The specific mismatch between the resume and the job post (e.g., 'Candidate lacks experience in Python').",
+        ),
+      intent: z
+        .string()
+        .describe("What the interviewer should look for to bridge this gap."),
+      suggestedLogic: z
+        .string()
+        .describe(
+          "Technical or logical framework the candidate should use in their answer.",
+        ),
+    }),
+  ),
+});
+
 export const AiResponseSchema = {
   applicationAiNotes,
   resumeDoctor,
@@ -238,4 +267,5 @@ export const AiResponseSchema = {
   interviewQuestionEvaluation,
   aiJobPostAssistant,
   standardInterviewQuestion,
+  individualInterviewQuestion,
 };

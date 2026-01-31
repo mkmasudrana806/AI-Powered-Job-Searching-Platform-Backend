@@ -1,6 +1,9 @@
 import { Worker } from "bullmq";
 import redisConnection from "../../config/redis";
-import { standardInterviewQuestionHandler } from "../workerHandlers/employer.handler";
+import {
+  individualInterviewQuestionHandler,
+  standardInterviewQuestionHandler,
+} from "../workerHandlers/employer.handler";
 
 // in this worker, i will keep many background jobs
 const employerWorker = new Worker(
@@ -9,6 +12,13 @@ const employerWorker = new Worker(
     switch (job.name) {
       case "standard-interview-kit":
         await standardInterviewQuestionHandler(job.data.jobId);
+        break;
+      case "ci-question-generate":
+        await individualInterviewQuestionHandler(
+          job.data.jobId,
+          job.data.candidateId,
+        );
+        break;
     }
   },
   {
@@ -26,6 +36,7 @@ employerWorker.on("active", (job, prev) => {
 const getIdentifier = (job: any) => {
   const mapping: Record<string, string> = {
     "standard-interview-kit": job.data.jobId,
+    "ci-question-generate": job.data.jobId,
   };
   return mapping[job.name] || "Unknown ID";
 };
