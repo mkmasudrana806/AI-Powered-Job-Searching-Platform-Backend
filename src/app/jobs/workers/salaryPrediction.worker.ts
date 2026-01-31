@@ -18,6 +18,7 @@ const salaryPredictionWorker = new Worker(
   {
     connection: redisConnection,
     concurrency: 3,
+    lockDuration: 120000,
   },
 );
 

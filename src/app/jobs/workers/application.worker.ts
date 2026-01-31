@@ -25,12 +25,12 @@ const applicationWorker = new Worker(
           `No handler found for ${job.name}`,
         );
     }
-    const applicationId = job.data.applicationId;
   },
 
   {
     connection: redisConnection,
     concurrency: 3,
+    lockDuration: 120000,
   },
 );
 
