@@ -4,6 +4,7 @@ import { InterviewPrep } from "../../modules/interviewPreparation/interviewPrepa
 import { AiResponseSchema } from "../aiResponseSchema";
 import aiServices from "../aiService";
 import getQuestionPracticePrompt from "../prompts/interviewQuestionPractice.prompt";
+import geminiRateLimiter from "../geminiRateLimit";
 
 const interviewQuestionPracticeService = async (
   userId: string,
@@ -35,10 +36,12 @@ const interviewQuestionPracticeService = async (
 
   // evaluate the answer
   const evaluation = JSON.parse(
-    await aiServices.generateContent(
-      systemPrompt,
-      userPrompt,
-      AiResponseSchema.interviewQuestionEvaluation,
+    await geminiRateLimiter.schedule(() =>
+      aiServices.generateContent(
+        systemPrompt,
+        userPrompt,
+        AiResponseSchema.interviewQuestionEvaluation,
+      ),
     ),
   );
 

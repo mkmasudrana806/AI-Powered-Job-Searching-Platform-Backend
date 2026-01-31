@@ -7,6 +7,7 @@ import cosineSimilarity from "../../utils/consineSimilarityMatching";
 import { getResumeDoctorPrompt } from "../prompts/resumeDoctor.prompt";
 import aiServices from "../aiService";
 import { AiResponseSchema } from "../aiResponseSchema";
+import geminiRateLimiter from "../geminiRateLimit";
 
 /**
  * ----------- resume doctor/analysis service -----------
@@ -50,15 +51,16 @@ const resumeDoctorService = async (userId: string, jobId: string) => {
   );
 
   // call ai service to get analysis
-  const aiResponse = await aiServices.generateContent(
-    systemPrompt,
-    userPrompt,
-    AiResponseSchema.resumeDoctor,
+  const aiResponse = await geminiRateLimiter.schedule(() =>
+    aiServices.generateContent(
+      systemPrompt,
+      userPrompt,
+      AiResponseSchema.resumeDoctor,
+    ),
   );
 
   const finalResult = { ...JSON.parse(aiResponse), matchScore };
   return finalResult;
-  
 };
 
 export default resumeDoctorService;

@@ -1,5 +1,6 @@
 import { AiResponseSchema } from "../../ai/aiResponseSchema";
 import aiServices from "../../ai/aiService";
+import geminiRateLimiter from "../../ai/geminiRateLimit";
 import getInterviewPrepPrompt from "../../ai/prompts/interviewPrep.prompt";
 import { InterviewPrep } from "../../modules/interviewPreparation/interviewPreparation.model";
 import { Job } from "../../modules/jobs/jobs.model";
@@ -35,10 +36,12 @@ const interviewPrepHandler = async (userId: string, jobId: string) => {
     );
 
     // generate dashboard content with exact schema
-    const aiResponse = await aiServices.generateContent(
-      systemPrompt,
-      userPrompt,
-      AiResponseSchema.interviewPrepDashboard,
+    const aiResponse = await geminiRateLimiter.schedule(() =>
+      aiServices.generateContent(
+        systemPrompt,
+        userPrompt,
+        AiResponseSchema.interviewPrepDashboard,
+      ),
     );
 
     // save and return the newly dashboard to the user

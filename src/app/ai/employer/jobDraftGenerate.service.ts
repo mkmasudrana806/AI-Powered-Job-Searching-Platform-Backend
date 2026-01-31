@@ -8,6 +8,7 @@ import getJobPostAssistantPrompt from "../prompts/jobPostAssistant.prompt";
 import { countryCurrencyMap } from "../../utils/countryCurrencyMap";
 import aiServices from "../aiService";
 import { AiResponseSchema } from "../aiResponseSchema";
+import geminiRateLimiter from "../geminiRateLimit";
 
 const generateJobDraftService = async (
   companyId: string,
@@ -47,10 +48,12 @@ const generateJobDraftService = async (
   );
 
   // generate job post draft
-  const aiResponse = await aiServices.generateContent(
-    systemPrompt,
-    userPrompt,
-    AiResponseSchema.aiJobPostAssistant,
+  const aiResponse = await geminiRateLimiter.schedule(() =>
+    aiServices.generateContent(
+      systemPrompt,
+      userPrompt,
+      AiResponseSchema.aiJobPostAssistant,
+    ),
   );
 
   return {

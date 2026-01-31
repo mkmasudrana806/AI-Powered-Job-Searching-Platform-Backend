@@ -7,6 +7,7 @@ import { AiResponseSchema } from "../../ai/aiResponseSchema";
 import { UserProfile } from "../../modules/userProfile/userProfile.model";
 import individualInterviewQuestionPrompt from "../../ai/prompts/individualInterviewQuestion.prompt";
 import CIQuestion from "../../modules/candidateInterviewQuetions/candidateInterviewQuetions.model";
+import geminiRateLimiter from "../../ai/geminiRateLimit";
 
 /**
  * ---------- standard question generate for each job -----------
@@ -31,10 +32,12 @@ export const standardInterviewQuestionHandler = async (jobId: string) => {
 
   try {
     // generate content
-    const aiResponse = await aiServices.generateContent(
-      systemPrompt,
-      userPrompt,
-      AiResponseSchema.standardInterviewQuestion,
+    const aiResponse = await geminiRateLimiter.schedule(() =>
+      aiServices.generateContent(
+        systemPrompt,
+        userPrompt,
+        AiResponseSchema.standardInterviewQuestion,
+      ),
     );
 
     // embed interviewKit to job data
@@ -89,10 +92,12 @@ export const individualInterviewQuestionHandler = async (
 
   try {
     // generate question
-    const aiResponse = await aiServices.generateContent(
-      systemPrompt,
-      userPrompt,
-      AiResponseSchema.individualInterviewQuestion,
+    const aiResponse = await geminiRateLimiter.schedule(() =>
+      aiServices.generateContent(
+        systemPrompt,
+        userPrompt,
+        AiResponseSchema.individualInterviewQuestion,
+      ),
     );
 
     // save to database

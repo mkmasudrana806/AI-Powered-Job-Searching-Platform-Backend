@@ -10,6 +10,7 @@ import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import { TJob } from "../../modules/jobs/jobs.interface";
 import { Job } from "../../modules/jobs/jobs.model";
 import { AiResponseSchema } from "../../ai/aiResponseSchema";
+import geminiRateLimiter from "../../ai/geminiRateLimit";
 
 /**
  * ------------ fetch application details with job and profile ------------
@@ -68,10 +69,12 @@ export const applicationMatchaiNoteHandler = async (applicationId: string) => {
   });
 
   // ai notes
-  const response = await aiServices.generateContent(
-    userPrompt,
-    systemPrompt,
-    AiResponseSchema.applicationAiNotes,
+  const response = await geminiRateLimiter.schedule(() =>
+    aiServices.generateContent(
+      userPrompt,
+      systemPrompt,
+      AiResponseSchema.applicationAiNotes,
+    ),
   );
   const aiNotes = JSON.parse(response);
 

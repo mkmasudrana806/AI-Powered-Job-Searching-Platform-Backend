@@ -6,6 +6,7 @@ import cosineSimilarity from "../../utils/consineSimilarityMatching";
 import aiServices from "../aiService";
 import getSkillGapPrompt from "../prompts/getSkillGapPrompt";
 import { AiResponseSchema } from "../aiResponseSchema";
+import geminiRateLimiter from "../geminiRateLimit";
 
 const skillGapAnalysisService = async (userId: string) => {
   // fetch user profile
@@ -67,8 +68,8 @@ const skillGapAnalysisService = async (userId: string) => {
   });
 
   console.log(skillFrequency);
-  console.log(profile?.skills)
- 
+  console.log(profile?.skills);
+
   // get prompt for skill gap analysis
   const { systemPrompt, userPrompt } = getSkillGapPrompt(
     profile,
@@ -76,10 +77,12 @@ const skillGapAnalysisService = async (userId: string) => {
     relevantJobs.length,
   );
 
-  const result = await aiServices.generateContent(
-    systemPrompt,
-    userPrompt,
-    AiResponseSchema.skillMarketAnalysis,
+  const result = await geminiRateLimiter.schedule(() =>
+    aiServices.generateContent(
+      systemPrompt,
+      userPrompt,
+      AiResponseSchema.skillMarketAnalysis,
+    ),
   );
   return JSON.parse(result);
 };

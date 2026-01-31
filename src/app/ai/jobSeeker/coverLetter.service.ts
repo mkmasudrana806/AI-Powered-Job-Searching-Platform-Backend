@@ -6,6 +6,7 @@ import getCoverLetterPrompt from "../prompts/coverLetter.promp";
 import aiServices from "../aiService";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { AiResponseSchema } from "../aiResponseSchema";
+import geminiRateLimiter from "../geminiRateLimit";
 
 const coverLetterAiService = async (userId: string, jobId: string) => {
   // validate ids
@@ -30,10 +31,12 @@ const coverLetterAiService = async (userId: string, jobId: string) => {
   const { systemPrompt, userPrompt } = getCoverLetterPrompt(profile, job);
 
   // call ai service to get analysis
-  const aiResponse = await aiServices.generateContent(
-    systemPrompt,
-    userPrompt,
-    AiResponseSchema.coverLetter,
+  const aiResponse = await geminiRateLimiter.schedule(() =>
+    aiServices.generateContent(
+      systemPrompt,
+      userPrompt,
+      AiResponseSchema.coverLetter,
+    ),
   );
 
   const finalResult = JSON.parse(aiResponse);
