@@ -21,6 +21,7 @@ const config = {
   cloudinary_name: process.env.CLOUDINARY_NAME,
   cloudinary_api_key: process.env.CLOUDINARY_API_KEY,
   cloudinary_secret_key: process.env.CLOUDINARY_SECRET_KEY,
+  redis_connection_url: process.env.REDIS_CONNECTION_STRING,
   embedding_model_name: process.env.EMBEDDING_MODEL_NAME,
   google_api_key: process.env.GOOGLE_API_KEY,
   content_generate_model_name: process.env.CONTENT_GENERATE_MODEL_NAME,

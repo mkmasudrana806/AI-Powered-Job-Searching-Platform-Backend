@@ -1,6 +1,7 @@
 import IORedis from "ioredis";
+import config from "./env";
 
-const redisConnection = new IORedis("redis://127.0.0.1:6379", {
+const redisConnection = new IORedis(config.redis_connection_url as string, {
   maxRetriesPerRequest: null,
 });
 
@@ -18,7 +19,7 @@ redisConnection.on("ready", () => {
 redisConnection.on("error", (err) => {
   console.error(
     "Error: You may forgot to run Redis server!. Reason: ",
-    err.message
+    err.message,
   );
 });
 
