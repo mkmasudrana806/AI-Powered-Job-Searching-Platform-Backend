@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import AppError from "../utils/AppError";
 import httpStatus from "http-status";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import config from "../config/env";
 import { User } from "../modules/users/user.model";
 import asyncHandler from "../utils/asyncHandler";
@@ -30,7 +30,7 @@ const auth = (...requiredRoles: string[]) => {
         decoded = jwt.verify(
           token,
           config.jwt_access_secret as string
-        ) as JwtPayload;
+        ) as TJwtPayload;
       } catch (error) {
         throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access!");
       }
@@ -77,7 +77,7 @@ const auth = (...requiredRoles: string[]) => {
         throw new AppError(httpStatus.UNAUTHORIZED, "Unauthorized access!");
       }
 
-      req.user = { userId, role };
+      req.user = decoded;
       next();
     }
   );
