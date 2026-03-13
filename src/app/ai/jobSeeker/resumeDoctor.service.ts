@@ -5,9 +5,9 @@ import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import { Job } from "../../modules/jobs/jobs.model";
 import cosineSimilarity from "../../utils/consineSimilarityMatching";
 import { getResumeDoctorPrompt } from "../prompts/resumeDoctor.prompt";
-import aiServices from "../aiService";
-import { AiResponseSchema } from "../aiResponseSchema";
-import geminiRateLimiter from "../geminiRateLimit";
+import aiServices from "../core/aiService";
+import { AiResponseSchema } from "../core/aiResponseSchema";
+import geminiRateLimiter from "../core/geminiRateLimit";
 
 /**
  * ----------- resume doctor/analysis service -----------

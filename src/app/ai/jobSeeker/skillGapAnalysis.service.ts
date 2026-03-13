@@ -3,10 +3,10 @@ import { UserProfile } from "../../modules/userProfile/userProfile.model";
 import AppError from "../../utils/AppError";
 import { Job } from "../../modules/jobs/jobs.model";
 import cosineSimilarity from "../../utils/consineSimilarityMatching";
-import aiServices from "../aiService";
+import aiServices from "../core/aiService";
 import getSkillGapPrompt from "../prompts/getSkillGapPrompt";
-import { AiResponseSchema } from "../aiResponseSchema";
-import geminiRateLimiter from "../geminiRateLimit";
+import { AiResponseSchema } from "../core/aiResponseSchema";
+import geminiRateLimiter from "../core/geminiRateLimit";
 
 const skillGapAnalysisService = async (userId: string) => {
   // fetch user profile

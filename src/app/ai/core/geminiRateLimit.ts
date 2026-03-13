@@ -1,5 +1,5 @@
 import Bottleneck from "bottleneck";
-import redisConnection from "../config/redis";
+import redisConnection from "../../config/redis";
 
 const geminiRateLimiter = new Bottleneck({
   id: "gemini-api-limit",

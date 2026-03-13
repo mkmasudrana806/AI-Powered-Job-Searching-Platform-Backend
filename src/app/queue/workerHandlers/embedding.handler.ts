@@ -1,5 +1,5 @@
 import httpStatus from "http-status";
-import aiServices from "../../ai/aiService";
+import aiServices from "../../ai/core/aiService";
 import config from "../../config/env";
 import { Job } from "../../modules/jobs/jobs.model";
 import { buildJobEmbeddingText } from "../../modules/jobs/jobs.utils";

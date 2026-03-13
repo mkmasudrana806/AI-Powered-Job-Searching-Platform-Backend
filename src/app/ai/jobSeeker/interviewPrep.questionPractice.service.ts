@@ -1,10 +1,10 @@
 import httpStatus from "http-status";
 import AppError from "../../utils/AppError";
 import { InterviewPrep } from "../../modules/interviewPreparation/interviewPreparation.model";
-import { AiResponseSchema } from "../aiResponseSchema";
-import aiServices from "../aiService";
+import { AiResponseSchema } from "../core/aiResponseSchema";
+import aiServices from "../core/aiService";
 import getQuestionPracticePrompt from "../prompts/interviewQuestionPractice.prompt";
-import geminiRateLimiter from "../geminiRateLimit";
+import geminiRateLimiter from "../core/geminiRateLimit";
 
 const interviewQuestionPracticeService = async (
   userId: string,

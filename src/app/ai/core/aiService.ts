@@ -1,6 +1,6 @@
 import { GoogleGenAI } from "@google/genai";
-import config from "../config/env";
-import AppError from "../utils/AppError";
+import config from "../../config/env";
+import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
 import zodToJsonSchema from "zod-to-json-schema";
 

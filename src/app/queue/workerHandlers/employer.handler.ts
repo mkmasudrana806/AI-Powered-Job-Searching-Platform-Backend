@@ -2,12 +2,12 @@ import httpStatus from "http-status";
 import { Job } from "../../modules/jobs/jobs.model";
 import AppError from "../../utils/AppError";
 import employerStandardQuestionPrompt from "../../ai/prompts/employerStandardQuestion.prompt";
-import aiServices from "../../ai/aiService";
-import { AiResponseSchema } from "../../ai/aiResponseSchema";
+import aiServices from "../../ai/core/aiService";
+import { AiResponseSchema } from "../../ai/core/aiResponseSchema";
 import { UserProfile } from "../../modules/userProfile/userProfile.model";
 import individualInterviewQuestionPrompt from "../../ai/prompts/individualInterviewQuestion.prompt";
 import CIQuestion from "../../modules/candidateInterviewQuetions/candidateInterviewQuetions.model";
-import geminiRateLimiter from "../../ai/geminiRateLimit";
+import geminiRateLimiter from "../../ai/core/geminiRateLimit";
 
 /**
  * ---------- standard question generate for each job -----------

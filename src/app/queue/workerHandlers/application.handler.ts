@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { Application } from "../../modules/applications/applications.model";
 import { CandidateRanking } from "./utils";
-import aiServices from "../../ai/aiService";
+import aiServices from "../../ai/core/aiService";
 import getAINotesPrompt from "../../ai/prompts/aiNotes.prompt";
 import cosineSimilarity from "../../utils/consineSimilarityMatching";
 import AppError from "../../utils/AppError";
@@ -9,8 +9,8 @@ import httpStatus from "http-status";
 import { TUserProfile } from "../../modules/userProfile/userProfile.interface";
 import { TJob } from "../../modules/jobs/jobs.interface";
 import { Job } from "../../modules/jobs/jobs.model";
-import { AiResponseSchema } from "../../ai/aiResponseSchema";
-import geminiRateLimiter from "../../ai/geminiRateLimit";
+import { AiResponseSchema } from "../../ai/core/aiResponseSchema";
+import geminiRateLimiter from "../../ai/core/geminiRateLimit";
 
 /**
  * ------------ fetch application details with job and profile ------------

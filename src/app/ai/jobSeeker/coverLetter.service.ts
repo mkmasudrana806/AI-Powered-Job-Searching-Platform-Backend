@@ -3,10 +3,10 @@ import { Job } from "../../modules/jobs/jobs.model";
 import { UserProfile } from "../../modules/userProfile/userProfile.model";
 import AppError from "../../utils/AppError";
 import getCoverLetterPrompt from "../prompts/coverLetter.promp";
-import aiServices from "../aiService";
+import aiServices from "../core/aiService";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
-import { AiResponseSchema } from "../aiResponseSchema";
-import geminiRateLimiter from "../geminiRateLimit";
+import { AiResponseSchema } from "../core/aiResponseSchema";
+import geminiRateLimiter from "../core/geminiRateLimit";
 
 const coverLetterAiService = async (userId: string, jobId: string) => {
   // validate ids

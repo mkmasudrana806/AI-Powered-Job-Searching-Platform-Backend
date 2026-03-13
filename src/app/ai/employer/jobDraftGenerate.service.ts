@@ -6,9 +6,9 @@ import AppError from "../../utils/AppError";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import getJobPostAssistantPrompt from "../prompts/jobPostAssistant.prompt";
 import { countryCurrencyMap } from "../../utils/countryCurrencyMap";
-import aiServices from "../aiService";
-import { AiResponseSchema } from "../aiResponseSchema";
-import geminiRateLimiter from "../geminiRateLimit";
+import aiServices from "../core/aiService";
+import { AiResponseSchema } from "../core/aiResponseSchema";
+import geminiRateLimiter from "../core/geminiRateLimit";
 
 const generateJobDraftService = async (
   companyId: string,
