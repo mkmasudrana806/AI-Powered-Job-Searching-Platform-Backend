@@ -1,21 +1,10 @@
 import { model, Schema } from "mongoose";
 import bcrypt from "bcrypt";
-import { IUser, TUser, TUserName } from "./user.interface";
+import { IUser, TUser } from "./user.interface";
 import config from "../../config/env";
-
-const userNameSchema = new Schema<TUserName>({
-  firstName: { type: String, required: true },
-  middleName: { type: String },
-  lastName: { type: String, required: true },
-});
 
 const userSchema = new Schema<TUser, IUser>(
   {
-    name: {
-      type: userNameSchema,
-      required: true,
-    },
-
     email: {
       type: String,
       required: true,
@@ -47,7 +36,7 @@ const userSchema = new Schema<TUser, IUser>(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 // ----------- pre middleware hook to hash password -----------
@@ -55,7 +44,7 @@ userSchema.pre("save", async function (next) {
   const user = this;
   user.password = await bcrypt.hash(
     user.password,
-    Number(config.bcrypt_salt_rounds)
+    Number(config.bcrypt_salt_rounds),
   );
   next();
 });
@@ -80,7 +69,7 @@ userSchema.post("findOneAndUpdate", function (doc) {
 // ----------- isPasswordMatch statics methods -----------
 userSchema.statics.isPasswordMatch = async function (
   plainPassword: string,
-  hashedPassword: string
+  hashedPassword: string,
 ) {
   const result = await bcrypt.compare(plainPassword, hashedPassword);
   return result;
@@ -89,7 +78,7 @@ userSchema.statics.isPasswordMatch = async function (
 // ----------- check is jwt issued before password change -----------
 userSchema.statics.isJWTIssuedBeforePasswordChange = function (
   passwordChangedTimestamp: Date,
-  jwtIssuedtimestamp: number
+  jwtIssuedtimestamp: number,
 ) {
   // UTC datetime to milliseconds
   const passwordChangedtime =

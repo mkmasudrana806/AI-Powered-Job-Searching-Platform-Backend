@@ -7,7 +7,6 @@ import { TUser } from "./user.interface";
 import { User } from "./user.model";
 import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
-import { TfileUpload } from "../../interface/fileUploadType";
 import QueryBuilder from "../../queryBuilder/queryBuilder";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 

@@ -2,7 +2,6 @@ import httpStatus from "http-status";
 import { UserServices } from "./user.service";
 import asyncHandler from "../../utils/asyncHandler";
 import sendResponse from "../../utils/sendResponse";
-import { TfileUpload } from "../../interface/fileUploadType";
 
 // ------------------- create an user -------------------
 const createAnUser = asyncHandler(async (req, res, next) => {
@@ -44,7 +43,7 @@ const getMe = asyncHandler(async (req, res, next) => {
 
 // ------------------- delete an user -------------------
 const deleteUser = asyncHandler(async (req, res, next) => {
-  const result = await UserServices.deleteUserFromDB(req.params.id);
+  const result = await UserServices.deleteUserFromDB(req.params.userId);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -7,6 +7,7 @@ import { ApplicationRoutes } from "../modules/applications/applications.routes";
 import { UserProfileRoutes } from "../modules/userProfile/userProfile.routes";
 import { InterviewPrepRoutes } from "../modules/interviewPreparation/interviewPreparation.routes";
 import { CIQuestionRoutes } from "../modules/candidateInterviewQuetions/candidateInterviewQuetions.route";
+import { meRoutes } from "../modules/me/me.route";
 const router = express.Router();
 
 // user
@@ -32,5 +33,8 @@ router.use("/interview-prep", InterviewPrepRoutes);
 
 // shortlisted candidate specific interview question for employer
 router.use("/ci-question", CIQuestionRoutes);
+
+// me routes
+router.use("/me", meRoutes);
 
 export const ApiRoutes = router;

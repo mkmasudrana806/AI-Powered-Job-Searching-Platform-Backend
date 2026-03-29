@@ -1,39 +1,32 @@
 import express from "express";
 import { UserControllers } from "./user.controller";
 import validateRequestData from "../../middlewares/validateRequest";
-import { UserValidations } from "./user.validation";
+import { UserValidationSchema } from "./user.validation";
 import auth from "../../middlewares/auth";
 const router = express.Router();
 
+// --------------- CRUD routes -------------
 // create an user
 router.post(
   "/",
-  validateRequestData(UserValidations.createUserValidationSchema),
+  validateRequestData(UserValidationSchema.registerUser),
   UserControllers.createAnUser,
 );
 
 // get all users
 router.get("/", auth("admin"), UserControllers.getAllUsers);
 
-// get me route
-router.get("/getMe", auth("user", "admin"), UserControllers.getMe);
-
 // delete an user
-router.delete("/:id", auth("admin"), UserControllers.deleteUser);
+router.delete("/:userId", auth("admin"), UserControllers.deleteUser);
 
-// update an user
-router.patch(
-  "/:id",
-  auth("user", "admin"),
-  validateRequestData(UserValidations.updateUserValidationsSchema),
-  UserControllers.updateUser,
-);
+// update an user (status, role)
+router.patch("/:id", auth("admin"), UserControllers.updateUser);
 
 // change user status
 router.post(
   "/change-status/:id",
   auth("admin"),
-  validateRequestData(UserValidations.changeUserStatusSchema),
+  validateRequestData(UserValidationSchema.changeUserStatus),
   UserControllers.changeUserStatus,
 );
 

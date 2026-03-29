@@ -1,18 +1,8 @@
 import z from "zod";
 
-const userNameValidationSchema = z.object({
-  firstName: z.string({
-    required_error: "First name is required",
-  }),
-  middleName: z.string().optional(),
-  lastName: z.string({
-    required_error: "Last name is required",
-  }),
-});
-
-const createUserValidationSchema = z.object({
+// user register schema
+const registerUser = z.object({
   body: z.object({
-    name: userNameValidationSchema,
     email: z
       .string({
         required_error: "Email is required",
@@ -24,18 +14,8 @@ const createUserValidationSchema = z.object({
   }),
 });
 
-// update user name validation schema
-const updateUserNameValidationSchema = userNameValidationSchema.partial();
-
-// update user validations schema
-const updateUserValidationsSchema = z.object({
-  body: z.object({
-    name: updateUserNameValidationSchema.optional(),
-  }),
-});
-
 // change user status schema
-const changeUserStatusSchema = z.object({
+const changeUserStatus = z.object({
   body: z.object({
     status: z.enum(["active", "blocked"], {
       required_error: "User status is required",
@@ -43,8 +23,7 @@ const changeUserStatusSchema = z.object({
   }),
 });
 
-export const UserValidations = {
-  createUserValidationSchema,
-  updateUserValidationsSchema,
-  changeUserStatusSchema,
+export const UserValidationSchema = {
+  registerUser,
+  changeUserStatus,
 };
