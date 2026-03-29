@@ -1,4 +1,4 @@
-import salaryPredictionQueue from "../../jobs/queues/salaryPrediction.queue";
+import salaryPredictionQueue from "../../queue/queues/salaryPrediction.queue";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
 import SalaryPrediction from "./salaryPrediction.model";
 

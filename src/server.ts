@@ -2,7 +2,7 @@ import app from "./app";
 import config from "./app/config/env";
 import mongoose from "mongoose";
 import { Server } from "http";
-import seedAdmin from "./app/DB";
+import seedAdmin from "./app/config/DB";
 
 let server: Server;
 

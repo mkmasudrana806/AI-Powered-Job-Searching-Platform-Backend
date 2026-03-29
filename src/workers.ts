@@ -1,15 +1,15 @@
 import { Worker } from "bullmq";
-import embeddingWorker from "./app/jobs/workers/embedding.worker";
-import applicationMatchRankWorker from "./app/jobs/workers/application.worker";
+import embeddingWorker from "./app/queue/workers/embedding.worker";
+import applicationWorker from "./app/queue/workers/application.worker";
 import mongoose from "mongoose";
 import config from "./app/config/env";
-import salaryPredictionWorker from "./app/jobs/workers/salaryPrediction.worker";
-import interviewPrepWorker from "./app/jobs/workers/interviewPrep.worker";
-import employerWorker from "./app/jobs/workers/employer.worker";
+import salaryPredictionWorker from "./app/queue/workers/salaryPrediction.worker";
+import interviewPrepWorker from "./app/queue/workers/interviewPrep.worker";
+import employerWorker from "./app/queue/workers/employer.worker";
 
 const allWorkers: Worker[] = [
   embeddingWorker,
-  applicationMatchRankWorker,
+  applicationWorker,
   salaryPredictionWorker,
   interviewPrepWorker,
   employerWorker,

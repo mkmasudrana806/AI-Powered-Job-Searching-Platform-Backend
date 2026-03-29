@@ -1,4 +1,4 @@
-import interviewPrepQueue from "../../jobs/queues/interviewPrep.queue";
+import interviewPrepQueue from "../../queue/queues/interviewPrep.queue";
 import { TInterviewPrep } from "./interviewPreparation.interface";
 import { InterviewPrep } from "./interviewPreparation.model";
 

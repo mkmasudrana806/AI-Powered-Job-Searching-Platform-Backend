@@ -6,9 +6,9 @@ import AppError from "../../utils/AppError";
 import httpStatus from "http-status";
 import { TCompanyMiddlewareData } from "../companies/companies.interface";
 import { validateObjectIDs } from "../../utils/validateObjectIDs";
-import { embeddingQueue } from "../../jobs/queues/embedding.queue";
-import applicationQueue from "../../jobs/queues/application.queue";
-import employerQueue from "../../jobs/queues/employer.queue";
+import embeddingQueue from "../../queue/queues/embedding.queue";
+import applicationQueue from "../../queue/queues/application.queue";
+import employerQueue from "../../queue/queues/employer.queue";
 
 /**
  * ------------------ create job as draft or open ------------------

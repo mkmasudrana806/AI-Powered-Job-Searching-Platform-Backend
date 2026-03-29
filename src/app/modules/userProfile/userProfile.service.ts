@@ -9,8 +9,8 @@ import {
   buildProfileEmbeddingText,
   generateHash,
 } from "./userProfile.utils";
-import { embeddingQueue } from "../../jobs/queues/embedding.queue";
-import salaryPredictionQueue from "../../jobs/queues/salaryPrediction.queue";
+import embeddingQueue from "../../queue/queues/embedding.queue";
+import salaryPredictionQueue from "../../queue/queues/salaryPrediction.queue";
 
 /**
  * ------------------- Create Profile -------------------

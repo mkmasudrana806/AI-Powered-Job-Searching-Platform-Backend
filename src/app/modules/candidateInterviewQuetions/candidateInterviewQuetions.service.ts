@@ -1,5 +1,5 @@
 import { Types } from "mongoose";
-import employerQueue from "../../jobs/queues/employer.queue";
+import employerQueue from "../../queue/queues/employer.queue";
 import CIQuestion from "./candidateInterviewQuetions.model";
 
 /**

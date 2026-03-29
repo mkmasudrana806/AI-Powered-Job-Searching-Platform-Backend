@@ -4,7 +4,7 @@ import redisConnection from "../../config/redis";
 /**
  * Queue for profile, job or any embedding
  */
-export const embeddingQueue = new Queue("embedding-queue", {
+const embeddingQueue = new Queue("embedding-queue", {
   connection: redisConnection,
 });
 
@@ -12,3 +12,5 @@ export const embeddingQueue = new Queue("embedding-queue", {
 embeddingQueue.on("error", (err) => {
   if (err) console.log("Embedding queue throws error!");
 });
+
+export default embeddingQueue;

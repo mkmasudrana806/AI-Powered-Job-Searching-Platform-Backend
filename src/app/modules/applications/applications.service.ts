@@ -10,7 +10,7 @@ import { UserProfile } from "../userProfile/userProfile.model";
 import { Job } from "../jobs/jobs.model";
 import { Company } from "../companies/companies.model";
 import { buildExperienceSummaryText } from "./applications.utils";
-import applicationQueue from "../../jobs/queues/application.queue";
+import applicationQueue from "../../queue/queues/application.queue";
 
 /**
  * --------------------- apply job ----------------------

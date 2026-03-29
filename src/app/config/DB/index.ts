@@ -1,6 +1,6 @@
 import httpStatus from "http-status";
-import { User } from "../modules/users/user.model";
-import AppError from "../utils/AppError";
+import { User } from "../../modules/users/user.model";
+import AppError from "../../utils/AppError";
 
 const adminData = {
   name: {

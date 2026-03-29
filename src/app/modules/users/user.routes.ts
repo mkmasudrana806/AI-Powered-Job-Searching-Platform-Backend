@@ -7,9 +7,9 @@ const router = express.Router();
 
 // create an user
 router.post(
-  "/create-user",
+  "/",
   validateRequestData(UserValidations.createUserValidationSchema),
-  UserControllers.createAnUser
+  UserControllers.createAnUser,
 );
 
 // get all users
@@ -26,7 +26,7 @@ router.patch(
   "/:id",
   auth("user", "admin"),
   validateRequestData(UserValidations.updateUserValidationsSchema),
-  UserControllers.updateUser
+  UserControllers.updateUser,
 );
 
 // change user status
@@ -34,7 +34,7 @@ router.post(
   "/change-status/:id",
   auth("admin"),
   validateRequestData(UserValidations.changeUserStatusSchema),
-  UserControllers.changeUserStatus
+  UserControllers.changeUserStatus,
 );
 
 export const UserRoutes = router;
